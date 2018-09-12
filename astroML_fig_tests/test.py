@@ -14,8 +14,13 @@ matplotlib.rc('font', family='serif', style='normal', variant='normal',
 
 import matplotlib.pyplot as plt
 from matplotlib.testing.compare import compare_images
-from matplotlib.testing.noseclasses import ImageComparisonFailure
-
+try:
+    # Revise when critical version requirement has been established.
+    # the ImageComparisonFailure was removed from noseclasses in 2.1.0 and
+    # was added to exceptions in 1.5.0
+    from matplotlib.testing.noseclasses import ImageComparisonFailure
+except ImportError:
+    from matplotlib.testing.exceptions import ImageComparisonFailure
 
 KNOWN_FAILURES = [
 
@@ -41,7 +46,7 @@ def set_cwd(directory):
     cwd = os.getcwd()
     if directory: os.chdir(directory)
     yield
-    os.chdir(cwd) 
+    os.chdir(cwd)
 
 
 def check_figure(filename, tol=1E-3):
