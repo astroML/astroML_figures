@@ -2,6 +2,7 @@ import os
 import fnmatch
 from contextlib import contextmanager
 from nose import SkipTest
+import glob
 
 import matplotlib
 from matplotlib import colors
@@ -94,12 +95,20 @@ def check_figure(filename, tol=1E-3):
 def test_book_figures(tol=0.1):
     cwd = os.getcwd()
 
-    for chapter in os.listdir('book_figures'):
-        if not os.path.isdir(os.path.join(cwd, 'book_figures', chapter)):
-            continue
-        for filename in os.listdir(os.path.join(cwd, 'book_figures', chapter)):
-            if not fnmatch.fnmatch(filename, "fig_*.py"):
+    # To test only a subset of the figures
+    single_figures = os.environ.get('FIGURES_TO_TEST', None)
+    if single_figures:
+        for fig_filename in glob.glob(single_figures):
+            if fnmatch.fnmatch(os.path.basename(fig_filename), "fig_*.py"):
+                yield check_figure, fig_filename, tol
+
+    else:
+        for chapter in os.listdir('book_figures'):
+            if not os.path.isdir(os.path.join(cwd, 'book_figures', chapter)):
                 continue
-            os.chdir(cwd)
-            filename = os.path.join('book_figures', chapter, filename)
-            yield check_figure, filename, tol
+            for filename in os.listdir(os.path.join(cwd, 'book_figures', chapter)):
+                if not fnmatch.fnmatch(filename, "fig_*.py"):
+                    continue
+                os.chdir(cwd)
+                fig_filename = os.path.join('book_figures', chapter, filename)
+                yield check_figure, fig_filename, tol
