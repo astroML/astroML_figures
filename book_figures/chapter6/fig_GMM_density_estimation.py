@@ -95,7 +95,7 @@ for N, k, subplot in zip(N_values, k_values, subplots):
     BICs = [gmm.bic(xN) for gmm in gmms]
     i_min = np.argmin(BICs)
     t = np.linspace(-10, 30, 1000)
-    logprob, responsibilities = gmms[i_min].eval(t)
+    logprob, responsibilities = gmms[i_min].score_samples(t)
 
     # plot the results
     ax.plot(t, true_pdf(t), ':', color='black', zorder=3,
