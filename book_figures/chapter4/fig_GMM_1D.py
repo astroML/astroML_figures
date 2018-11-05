@@ -35,11 +35,7 @@ setup_text_plots(fontsize=8, usetex=True)
 
 #------------------------------------------------------------
 # Set up the dataset.
-#  We'll use scikit-learn's Gaussian Mixture Model to sample
-#  data from a mixture of Gaussians.  The usual way of using
-#  this involves fitting the mixture to data: we'll see that
-#  below.  Here we'll set the internal means, covariances,
-#  and weights by-hand.
+#  We'll create our dataset by drawing samples from Gaussians.
 
 random_state = np.random.RandomState(seed=1)
 
@@ -48,8 +44,8 @@ X = np.concatenate([random_state.normal(-1, 1.5, 350),
                     random_state.normal(3, 0.5, 150)]).reshape(-1, 1)
 
 #------------------------------------------------------------
-# Learn the best-fit GMM models
-#  Here we'll use GMM in the standard way: the fit() method
+# Learn the best-fit GaussianMixture models
+#  Here we'll use scikit-learn's GaussianMixture model. The fit() method
 #  uses an Expectation-Maximization approach to find the best
 #  mixture of Gaussians for the data
 
