@@ -22,7 +22,7 @@ are most likely to belong to class 1.
 #    https://groups.google.com/forum/#!forum/astroml-general
 from matplotlib import pyplot as plt
 import numpy as np
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -58,7 +58,7 @@ N = np.arange(1, 11)
 models = [None for i in range(len(N))]
 
 for i in range(len(N)):
-    models[i] = GMM(N[i]).fit(X)
+    models[i] = GaussianMixture(N[i]).fit(X)
 
 # compute the AIC and the BIC
 AIC = [m.aic(X) for m in models]
@@ -81,7 +81,8 @@ ax = fig.add_subplot(131)
 M_best = models[np.argmin(AIC)]
 
 x = np.linspace(-6, 6, 1000)
-logprob, responsibilities = M_best.score_samples(x)
+logprob = M_best.score_samples(x.reshape(-1, 1))
+responsibilities = M_best.predict_proba(x.reshape(-1, 1))
 pdf = np.exp(logprob)
 pdf_individual = responsibilities * pdf[:, np.newaxis]
 
@@ -106,7 +107,7 @@ ax.legend(loc=2)
 # plot 3: posterior probabilities for each component
 ax = fig.add_subplot(133)
 
-p = M_best.predict_proba(x)
+p = responsibilities
 p = p[:, (1, 0, 2)]  # rearrange order so the plot looks better
 p = p.cumsum(1).T
 
