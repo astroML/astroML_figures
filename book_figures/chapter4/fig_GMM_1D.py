@@ -40,14 +40,12 @@ setup_text_plots(fontsize=8, usetex=True)
 #  this involves fitting the mixture to data: we'll see that
 #  below.  Here we'll set the internal means, covariances,
 #  and weights by-hand.
-np.random.seed(1)
 
-gmm = GMM(3, n_iter=1)
-gmm.means_ = np.array([[-1], [0], [3]])
-gmm.covars_ = np.array([[1.5], [1], [0.5]]) ** 2
-gmm.weights_ = np.array([0.3, 0.5, 0.2])
+random_state = np.random.RandomState(seed=1)
 
-X = gmm.sample(1000)
+X = np.concatenate([random_state.normal(-1, 1.5, 350),
+                    random_state.normal(0, 1, 500),
+                    random_state.normal(3, 0.5, 150)]).reshape(-1, 1)
 
 #------------------------------------------------------------
 # Learn the best-fit GMM models
