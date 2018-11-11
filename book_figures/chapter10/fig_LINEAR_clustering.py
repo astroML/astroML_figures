@@ -34,7 +34,7 @@ from __future__ import print_function, division
 import numpy as np
 from matplotlib import pyplot as plt
 
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 from astroML.decorators import pickle_results
 from astroML.datasets import fetch_LINEAR_geneva
@@ -70,7 +70,7 @@ for attr in attributes:
 #------------------------------------------------------------
 # Compute the results (and save to pickle file)
 @pickle_results('LINEAR_clustering.pkl')
-def compute_GMM_results(components, attributes):
+def compute_GaussianMixture_results(components, attributes):
     clfs = []
 
     for attr, X in zip(attributes, Xarrays):
@@ -78,8 +78,8 @@ def compute_GMM_results(components, attributes):
 
         for comp in components:
             print("  - {0} component fit".format(comp))
-            clf = GMM(comp, covariance_type='full',
-                      random_state=0, n_iter=500)
+            clf = GaussianMixture(comp, covariance_type='full',
+                      random_state=0, max_iter=500)
             clf.fit(X)
             clfs_i.append(clf)
 
@@ -89,7 +89,8 @@ def compute_GMM_results(components, attributes):
         clfs.append(clfs_i)
     return clfs
 
-clfs = compute_GMM_results(components, attributes)
+
+clfs = compute_GaussianMixture_results(components, attributes)
 
 #------------------------------------------------------------
 # Plot the results
@@ -117,7 +118,7 @@ for i in range(2):
 
     # sort the cluster by normalized density of points
     counts = np.sum(c == classes[:, None], 1)
-    size = np.array([np.linalg.det(C) for C in clf.covars_])
+    size = np.array([np.linalg.det(C) for C in clf.covariances_])
     weights = clf.weights_
     density = counts / size
 
@@ -137,9 +138,9 @@ for i in range(2):
     labels = ['$u-g$', '$g-i$', '$i-K$', '$J-K$',
               r'$\log(P)$', 'amplitude', 'skew',
               'kurtosis', 'median mag', r'$N_{\rm obs}$', 'Visual Class']
-    
+
     assert len(names) == len(labels)
-    
+
     i_logP = names.index('logP')
 
     for j in range(Nclusters):

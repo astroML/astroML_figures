@@ -18,7 +18,7 @@ the data (two components dominate over other eight). The third panel shows
 import numpy as np
 from matplotlib import pyplot as plt
 
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -39,9 +39,9 @@ X = np.concatenate([np.random.normal(0, 1, (200, 2)),
                     9 - 12 * np.random.random((200, 2))])
 
 #------------------------------------------------------------
-# Use a GMM to model the density and clone the points
-gmm = GMM(5, 'full').fit(X)
-X_new = gmm.sample(5000)
+# Use a GaussianMixture to model the density and clone the points
+gmm = GaussianMixture(5, 'full').fit(X)
+X_new = gmm.sample(5000)[0]
 
 xmin = -3
 xmax = 9
@@ -49,7 +49,7 @@ Xgrid = np.meshgrid(np.linspace(xmin, xmax, 50),
                     np.linspace(xmin, xmax, 50))
 Xgrid = np.array(Xgrid).reshape(2, -1).T
 
-dens = np.exp(gmm.score(Xgrid)).reshape((50, 50))
+dens = np.exp(gmm.score_samples(Xgrid)).reshape((50, 50))
 
 #------------------------------------------------------------
 # Plot the results

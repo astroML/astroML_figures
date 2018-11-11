@@ -21,7 +21,7 @@ from __future__ import print_function
 import numpy as np
 from matplotlib import pyplot as plt
 
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 from astroML.datasets import fetch_great_wall
 from astroML.decorators import pickle_results
 
@@ -43,9 +43,9 @@ X = fetch_great_wall()
 # Create a function which will save the results to a pickle file
 #  for large number of clusters, computation will take a long time!
 @pickle_results('great_wall_GMM.pkl')
-def compute_GMM(n_clusters, n_iter=1000, min_covar=3, covariance_type='full'):
-    clf = GMM(n_clusters, covariance_type=covariance_type,
-              n_iter=n_iter, min_covar=min_covar, random_state=0)
+def compute_GMM(n_clusters, max_iter=1000, tol=3, covariance_type='full'):
+    clf = GaussianMixture(n_clusters, covariance_type=covariance_type,
+                          max_iter=max_iter, tol=tol, random_state=0)
     clf.fit(X)
     print("converged:", clf.converged_)
     return clf
@@ -66,7 +66,7 @@ Xgrid = np.vstack(map(np.ravel, np.meshgrid(np.linspace(xmin, xmax, Nx),
 # we'll use 100 clusters.  In practice, one should cross-validate
 # with AIC and BIC to settle on the correct number of clusters.
 clf = compute_GMM(n_clusters=100)
-log_dens = clf.score(Xgrid).reshape(Ny, Nx)
+log_dens = clf.score_samples(Xgrid).reshape(Ny, Nx)
 
 #------------------------------------------------------------
 # Plot the results

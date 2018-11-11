@@ -23,9 +23,8 @@ from __future__ import print_function
 
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.stats import norm
 
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 from astroML.datasets import fetch_sdss_sspp
 from astroML.decorators import pickle_results
@@ -49,21 +48,21 @@ X = np.vstack([data['FeH'], data['alphFe']]).T
 X = X[::5]
 
 #------------------------------------------------------------
-# Compute GMM models & AIC/BIC
+# Compute GaussianMixture models & AIC/BIC
 N = np.arange(1, 14)
 
 
 @pickle_results("GMM_metallicity.pkl")
-def compute_GMM(N, covariance_type='full', n_iter=1000):
+def compute_GaussianMixture(N, covariance_type='full', max_iter=1000):
     models = [None for n in N]
     for i in range(len(N)):
         print(N[i])
-        models[i] = GMM(n_components=N[i], n_iter=n_iter,
-                        covariance_type=covariance_type)
+        models[i] = GaussianMixture(n_components=N[i], max_iter=max_iter,
+                                    covariance_type=covariance_type)
         models[i].fit(X)
     return models
 
-models = compute_GMM(N)
+models = compute_GaussianMixture(N)
 
 AIC = [m.aic(X) for m in models]
 BIC = [m.bic(X) for m in models]
@@ -85,7 +84,7 @@ Xgrid = np.array(list(map(np.ravel,
                                              + FeH_bins[1:]),
                                       0.5 * (alphFe_bins[:-1]
                                              + alphFe_bins[1:]))))).T
-log_dens = gmm_best.score(Xgrid).reshape((51, 51))
+log_dens = gmm_best.score_samples(Xgrid).reshape((51, 51))
 
 #------------------------------------------------------------
 # Plot the results
@@ -124,7 +123,7 @@ ax.imshow(np.exp(log_dens),
           cmap=plt.cm.binary)
 
 ax.scatter(gmm_best.means_[:, 0], gmm_best.means_[:, 1], c='w')
-for mu, C, w in zip(gmm_best.means_, gmm_best.covars_, gmm_best.weights_):
+for mu, C, w in zip(gmm_best.means_, gmm_best.covariances_, gmm_best.weights_):
     draw_ellipse(mu, C, scales=[1.5], ax=ax, fc='none', ec='k')
 
 ax.text(0.93, 0.93, "Converged",
