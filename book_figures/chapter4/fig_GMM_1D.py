@@ -82,7 +82,7 @@ ax = fig.add_subplot(131)
 M_best = models[np.argmin(AIC)]
 
 x = np.linspace(-6, 6, 1000)
-logprob, responsibilities = M_best.eval(x)
+logprob, responsibilities = M_best.score_samples(x)
 pdf = np.exp(logprob)
 pdf_individual = responsibilities * pdf[:, np.newaxis]
 
