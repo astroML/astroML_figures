@@ -13,3 +13,5 @@ def setup_text_plots(fontsize=8, usetex=True):
     matplotlib.rc('font', size=fontsize, family='serif',
                   style='normal', variant='normal',
                   stretch='normal', weight='normal')
+    matplotlib.rc('patch', force_edgecolor=True)
+    matplotlib.rc('_internal', classic_mode=True)
