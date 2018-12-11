@@ -58,9 +58,10 @@ def check_figure(filename, tol=1E-3):
 
     dirname, fname = os.path.split(filename)
 
-    baseline = os.path.abspath(os.path.join(os.path.dirname(__file__),
+    testdir = os.path.dirname(__file__)
+    baseline = os.path.abspath(os.path.join(testdir,
                                             'baseline', file_fmt))
-    result = os.path.abspath(os.path.join(os.path.dirname(__file__),
+    result = os.path.abspath(os.path.join(testdir,
                                           'results', file_fmt))
 
     resultdir = os.path.dirname(result)
@@ -69,11 +70,13 @@ def check_figure(filename, tol=1E-3):
 
     plt.close('all')
 
+    mpl_setup = open(os.path.join(testdir, 'settings.py')).read()
+
     with set_cwd(dirname):
         with open(fname) as f:
-            code = compile(f.read(), "somefile.py", 'exec')
-            exec(code, {'pl' : plt, 'plt' : plt, 'pylab' : plt})
+            code = compile(mpl_setup + f.read(), "somefile.py", 'exec')
 
+            exec(code, {'pl' : plt, 'plt' : plt, 'pylab' : plt})
     for fignum in plt.get_fignums():
         fig = plt.figure(fignum)
 
