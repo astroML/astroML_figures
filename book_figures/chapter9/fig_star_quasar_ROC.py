@@ -39,7 +39,8 @@ from astroML.classification import GMMBayes
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
 # you can set usetex to False.
-from astroML.plotting import setup_text_plots
+if "setup_text_plots" not in globals():
+    from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
 #------------------------------------------------------------
