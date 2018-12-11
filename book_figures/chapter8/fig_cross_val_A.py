@@ -61,7 +61,7 @@ y_fit = np.polyval(p, x_fit)
 
 ax.text(0.03, 0.96, "d = 1", transform=plt.gca().transAxes,
         ha='left', va='top',
-        bbox=dict(ec='k', fc='w', pad=10))
+        bbox=dict(ec='k', fc='w'))
 
 ax.plot(x_fit, y_fit, '-b')
 ax.set_xlabel('$x$')

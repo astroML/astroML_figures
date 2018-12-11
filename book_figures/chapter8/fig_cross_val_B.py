@@ -73,6 +73,6 @@ for i, d in enumerate([2, 3, 19]):
     ax.set_xlabel('$x$')
     ax.text(0.08, 0.94, "d = %i" % d, transform=ax.transAxes,
             ha='left', va='top',
-            bbox=dict(ec='k', fc='w', pad=10))
+            bbox=dict(ec='k', fc='w'))
 
 plt.show()

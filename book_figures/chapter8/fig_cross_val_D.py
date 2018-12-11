@@ -30,7 +30,6 @@ if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
-
 #------------------------------------------------------------
 # Define our functional form
 def func(x, dy=0.1):
@@ -83,7 +82,7 @@ for subplot, d in zip([211, 212], [2, 3]):
     ax.plot(Nrange, 0.1 * np.ones(Nrange.shape), ':k')
     ax.legend(loc=1)
     ax.text(0.03, 0.94, "d = %i" % d, transform=ax.transAxes,
-            ha='left', va='top', bbox=dict(ec='k', fc='w', pad=10))
+            ha='left', va='top', bbox=dict(ec='k', fc='w'))
 
     ax.set_ylim(0, 0.4)
 
