@@ -15,3 +15,4 @@ def setup_text_plots(fontsize=8, usetex=True):
                   stretch='normal', weight='normal')
     matplotlib.rc('patch', force_edgecolor=True)
     matplotlib.rc('_internal', classic_mode=True)
+    matplotlib.rc('grid', linestyle=':')
