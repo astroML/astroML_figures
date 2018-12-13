@@ -93,7 +93,7 @@ fig.subplots_adjust(wspace=0.35, right=0.95,
 # first axes: mu posterior
 ax1 = fig.add_subplot(221)
 ax1.plot(mu, pmu, '-k')
-ax1.hist(mu_bootstrap, mu_bins, normed=True,
+ax1.hist(mu_bootstrap, mu_bins, density=True,
          histtype='step', color='b', linestyle='dashed')
 ax1.set_xlabel(r'$\mu$')
 ax1.set_ylabel(r'$p(\mu|x,I)$')
@@ -101,7 +101,7 @@ ax1.set_ylabel(r'$p(\mu|x,I)$')
 # second axes: mu cumulative posterior
 ax2 = fig.add_subplot(223, sharex=ax1)
 ax2.plot(mu, pmu.cumsum() * dmu, '-k')
-ax2.hist(mu_bootstrap, mu_bins, normed=True, cumulative=True,
+ax2.hist(mu_bootstrap, mu_bins, density=True, cumulative=True,
          histtype='step', color='b', linestyle='dashed')
 ax2.set_xlabel(r'$\mu$')
 ax2.set_ylabel(r'$P(<\mu|x,I)$')
@@ -110,7 +110,7 @@ ax2.set_xlim(-3, 3)
 # third axes: gamma posterior
 ax3 = fig.add_subplot(222, sharey=ax1)
 ax3.plot(gamma, pgamma, '-k')
-ax3.hist(gamma_bootstrap, gamma_bins, normed=True,
+ax3.hist(gamma_bootstrap, gamma_bins, density=True,
          histtype='step', color='b', linestyle='dashed')
 ax3.set_xlabel(r'$\gamma$')
 ax3.set_ylabel(r'$p(\gamma|x,I)$')
@@ -119,7 +119,7 @@ ax3.set_ylim(-0.05, 1.1)
 # fourth axes: gamma cumulative posterior
 ax4 = fig.add_subplot(224, sharex=ax3, sharey=ax2)
 ax4.plot(gamma, pgamma.cumsum() * dgamma, '-k')
-ax4.hist(gamma_bootstrap, gamma_bins, normed=True, cumulative=True,
+ax4.hist(gamma_bootstrap, gamma_bins, density=True, cumulative=True,
          histtype='step', color='b', linestyle='dashed')
 ax4.set_xlabel(r'$\gamma$')
 ax4.set_ylabel(r'$P(<\gamma|x,I)$')

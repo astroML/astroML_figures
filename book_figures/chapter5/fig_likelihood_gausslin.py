@@ -103,7 +103,7 @@ ax.contour(sigma, A, convert_to_stdev(logL),
 ax2 = plt.subplot(212)
 ax2.yaxis.set_major_locator(plt.MultipleLocator(0.1))
 ax2.plot(x, fracA * dist1.pdf(x) + (1. - fracA) * dist2.pdf(x), '-k')
-ax2.hist(xi, 30, normed=True, histtype='stepfilled', fc='gray', alpha=0.5)
+ax2.hist(xi, 30, density=True, histtype='stepfilled', fc='gray', alpha=0.5)
 
 ax2.set_ylim(0, 0.301)
 ax2.set_xlim(-1, 11)

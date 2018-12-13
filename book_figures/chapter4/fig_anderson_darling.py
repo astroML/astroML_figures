@@ -87,7 +87,7 @@ for i in range(2):
     print("  Z_2 = %.1f" % Z2)
 
     # plot a histogram
-    ax.hist(vals[i], bins=50, normed=True, histtype='stepfilled', alpha=0.5)
+    ax.hist(vals[i], bins=50, density=True, histtype='stepfilled', alpha=0.5)
     ax.plot(x, pdf[i], '-k')
     ax.set_xlim(xlims[i])
 

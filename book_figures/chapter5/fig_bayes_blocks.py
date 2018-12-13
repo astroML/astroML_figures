@@ -60,10 +60,10 @@ for N, subplot in zip(N_values, subplots):
 
     # plot the results
     ax.plot(xN, -0.005 * np.ones(len(xN)), '|k')
-    hist(xN, bins='knuth', ax=ax, normed=True,
+    hist(xN, bins='knuth', ax=ax, density=True,
          histtype='stepfilled', alpha=0.3,
          label='Knuth Histogram')
-    hist(xN, bins='blocks', ax=ax, normed=True,
+    hist(xN, bins='blocks', ax=ax, density=True,
          histtype='step', color='k',
          label="Bayesian Blocks")
     ax.plot(t, true_pdf(t), '-', color='black',

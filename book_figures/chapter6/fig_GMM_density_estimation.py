@@ -102,7 +102,7 @@ for N, k, subplot in zip(N_values, k_values, subplots):
     ax.plot(t, true_pdf(t), ':', color='black', zorder=3,
             label="Generating Distribution")
     ax.plot(xN, -0.005 * np.ones(len(xN)), '|k', lw=1.5)
-    hist(xN, bins='blocks', ax=ax, normed=True, zorder=1,
+    hist(xN, bins='blocks', ax=ax, density=True, zorder=1,
          histtype='stepfilled', lw=1.5, color='k', alpha=0.2,
          label="Bayesian Blocks")
     ax.plot(t, np.exp(logprob), '-', color='gray',
