@@ -36,7 +36,7 @@ setup_text_plots(fontsize=8, usetex=True)
 
 #------------------------------------------------------------
 # Sample from a truncated exponential distribution
-N = 1E6
+N = int(1E6)
 hmin = 4.3
 hmax = 5.7
 k = 0.6 * np.log(10)

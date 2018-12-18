@@ -39,7 +39,7 @@ setup_text_plots(fontsize=8, usetex=True)
 
 # draw underlying points
 np.random.seed(0)
-Npts = 1E6
+Npts = int(1E6)
 x = np.random.normal(loc=0, scale=1, size=Npts)
 
 # add error for each point

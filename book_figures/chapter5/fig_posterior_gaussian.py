@@ -85,7 +85,7 @@ sig_std = sig_mean / np.sqrt(2 * (n - 1))
 
 #------------------------------------------------------------
 # bootstrap estimates
-mu_bootstrap, sig_bootstrap = bootstrap(xi, 1E6, mean_sigma,
+mu_bootstrap, sig_bootstrap = bootstrap(xi, int(1E6), mean_sigma,
                                         kwargs=dict(ddof=1, axis=1))
 
 #------------------------------------------------------------

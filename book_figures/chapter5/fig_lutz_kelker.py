@@ -62,7 +62,7 @@ def mag_errors(m_true, m5=24.0, fGamma=0.039):
 # Compute the Eddington-Malmquist bias & scatter
 np.random.seed(42)
 
-mtrue = generate_magnitudes(1E6, m_min=20, m_max=25)
+mtrue = generate_magnitudes(int(1E6), m_min=20, m_max=25)
 photomErr = mag_errors(mtrue)
 
 m1 = mtrue + np.random.normal(0, photomErr)
@@ -79,7 +79,7 @@ for i in range(mGrid.size):
 #----------------------------------------------------------------------
 # Lutz-Kelker bias and scatter
 
-mtrue = generate_magnitudes(1E6, m_min=17, m_max=20)
+mtrue = generate_magnitudes(int(1E6), m_min=17, m_max=20)
 relErr = 0.3 * 10 ** (0.4 * (mtrue - 20))
 
 pErrGrid = np.arange(0.02, 0.31, 0.01)

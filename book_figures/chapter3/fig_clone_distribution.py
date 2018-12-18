@@ -53,7 +53,7 @@ np.random.seed(0)
 # generate an 'observed' bimodal distribution with 10000 values
 dists = (stats.norm(-1.3, 0.5), stats.norm(1.3, 0.5))
 fracs = (0.6, 0.4)
-x = np.hstack((d.rvs(f * Ndata) for d, f in zip(dists, fracs)))
+x = np.hstack((d.rvs(int(f * Ndata)) for d, f in zip(dists, fracs)))
 
 # We can clone the distribution easily with this function
 x_cloned = EmpiricalDistribution(x).rvs(Nclone)

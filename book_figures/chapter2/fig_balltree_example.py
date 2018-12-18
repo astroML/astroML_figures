@@ -55,12 +55,13 @@ class BallTree:
 
             # find split point
             N = self.data.shape[0]
-            split_point = 0.5 * (self.data[N / 2, largest_dim]
-                                 + self.data[N / 2 - 1, largest_dim])
+            half_N = int(N / 2)
+            split_point = 0.5 * (self.data[half_N, largest_dim]
+                                 + self.data[half_N - 1, largest_dim])
 
             # recursively create subnodes
-            self.child1 = BallTree(self.data[N / 2:])
-            self.child2 = BallTree(self.data[:N / 2])
+            self.child1 = BallTree(self.data[half_N:])
+            self.child2 = BallTree(self.data[:half_N])
 
     def draw_circle(self, ax, depth=None):
         """Recursively plot a visualization of the Ball tree region"""

@@ -60,8 +60,9 @@ class KDTree:
 
             # find split point
             N = self.data.shape[0]
-            split_point = 0.5 * (self.data[N / 2, largest_dim]
-                                 + self.data[N / 2 - 1, largest_dim])
+            half_N = int(N / 2)
+            split_point = 0.5 * (self.data[half_N, largest_dim]
+                                 + self.data[half_N - 1, largest_dim])
 
             # create subnodes
             mins1 = self.mins.copy()
@@ -70,8 +71,8 @@ class KDTree:
             maxs2[largest_dim] = split_point
 
             # Recursively build a KD-tree on each sub-node
-            self.child1 = KDTree(self.data[N / 2:], mins1, self.maxs)
-            self.child2 = KDTree(self.data[:N / 2], self.mins, maxs2)
+            self.child1 = KDTree(self.data[half_N:], mins1, self.maxs)
+            self.child2 = KDTree(self.data[:half_N], self.mins, maxs2)
 
     def draw_rectangle(self, ax, depth=None):
         """Recursively plot a visualization of the KD tree region"""

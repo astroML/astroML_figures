@@ -1,3 +1,4 @@
+
 r"""
 Example of Benjamini & Hochberg Method
 --------------------------------------
@@ -41,7 +42,7 @@ f = 0.1
 
 # Draw from the distribution
 np.random.seed(42)
-N = 1E6
+N = int(1E6)
 X = np.random.random(N)
 mask = (X < 0.1)
 X[mask] = foreground.rvs(np.sum(mask))

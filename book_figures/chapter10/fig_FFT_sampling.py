@@ -57,7 +57,7 @@ window[i] = 1
 
 #------------------------------------------------------------
 # Compute PSDs
-Nfreq = Nbins / 2
+Nfreq = int(Nbins / 2)
 
 dt = t[1] - t[0]
 df = 1. / (Nbins * dt)
