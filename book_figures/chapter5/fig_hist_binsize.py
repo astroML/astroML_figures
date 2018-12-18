@@ -86,7 +86,7 @@ fig.subplots_adjust(hspace=0, left=0.07, right=0.95, wspace=0.05, bottom=0.15)
 ax = [fig.add_subplot(3, 2, i + 1) for i in range(6)]
 
 # first column: Gaussian distribution
-plot_labeled_histogram('scotts', data_G, 'Scott\'s Rule', x, pdf_G,
+plot_labeled_histogram('scott', data_G, 'Scott\'s Rule', x, pdf_G,
                        ax=ax[0], hide_x=True, hide_y=True)
 plot_labeled_histogram('freedman', data_G, 'Freed.-Diac.', x, pdf_G,
                        ax=ax[2], hide_x=True, hide_y=True)
@@ -98,7 +98,7 @@ ax[2].set_ylabel('$p(x)$')
 ax[4].set_xlabel('$x$')
 
 # second column: non-gaussian distribution
-plot_labeled_histogram('scotts', data_NG, 'Scott\'s Rule', x, pdf_NG,
+plot_labeled_histogram('scott', data_NG, 'Scott\'s Rule', x, pdf_NG,
                        ax=ax[1], hide_x=True, hide_y=True)
 plot_labeled_histogram('freedman', data_NG, 'Freed.-Diac.', x, pdf_NG,
                        ax=ax[3], hide_x=True, hide_y=True)
