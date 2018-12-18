@@ -32,7 +32,7 @@ setup_text_plots(fontsize=8, usetex=True)
 
 #------------------------------------------------------------
 # Create distribution
-Npts = 1E6
+Npts = int(1E6)
 f_out = 0.2
 N_out = int(f_out * Npts)
 
