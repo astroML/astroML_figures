@@ -19,7 +19,7 @@ two small Gaussian peaks added in the wings.
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats
-from astroML.plotting import hist
+from astropy.visualization import hist
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.

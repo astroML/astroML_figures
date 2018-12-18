@@ -32,7 +32,7 @@ from __future__ import print_function
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats, interpolate
-from astroML.plotting import hist
+from astropy.visualization import hist
 from astroML.density_estimation import EmpiricalDistribution
 
 #----------------------------------------------------------------------

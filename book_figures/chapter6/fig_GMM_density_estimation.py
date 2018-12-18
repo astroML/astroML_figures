@@ -22,7 +22,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats
 
-from astroML.plotting import hist
+from astropy.visualization import hist
 from sklearn.mixture import GMM
 
 # Scikit-learn 0.14 added sklearn.neighbors.KernelDensity, which is a very
