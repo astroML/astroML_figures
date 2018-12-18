@@ -22,7 +22,7 @@ from matplotlib import pyplot as plt
 from scipy import stats
 
 from astroML.density_estimation import KNeighborsDensity
-from astroML.plotting import hist
+from astropy.visualization import hist
 
 # Scikit-learn 0.14 added sklearn.neighbors.KernelDensity, which is a very
 # fast kernel density estimator based on a KD Tree.  We'll use this if
