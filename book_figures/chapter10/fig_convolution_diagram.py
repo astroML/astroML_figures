@@ -96,7 +96,7 @@ ax.plot(x_w, y_w, '-k')
 
 ax.text(0.5, 0.95, "Convolution:\n" + r"$[D \ast W](x)$",
         ha='center', va='top', transform=ax.transAxes,
-        bbox=dict(fc='w', ec='k', pad=8), zorder=2)
+        bbox=dict(fc='w', ec='k'), zorder=2)
 
 ax.text(0.5, 0.05,
         (r'$[D \ast W](x)$' +
@@ -151,7 +151,7 @@ ax.plot(k, abs(np.fft.fftshift(yw_fft)), '-k')
 ax.text(0.95, 0.95, ('Pointwise\nproduct:\n' +
                      r'$\mathcal{F}(D) \cdot \mathcal{F}(W)$'),
         ha='right', va='top', transform=ax.transAxes,
-        bbox=dict(fc='w', ec='k', pad=8), zorder=2)
+        bbox=dict(fc='w', ec='k'), zorder=2)
 
 ax.set_xlim(-100, 100)
 ax.set_ylim(-100, 3500)
