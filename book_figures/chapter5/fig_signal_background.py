@@ -103,7 +103,7 @@ ax = plt.axes([0.62, 0.62, 0.33, 0.33])
 x_pdf = np.linspace(0, 10, 100)
 y_pdf = A_true * signal.pdf(x_pdf) + (1 - A_true) * background.pdf(x_pdf)
 
-ax.hist(x, 15, normed=True, histtype='stepfilled', alpha=0.5)
+ax.hist(x, 15, density=True, histtype='stepfilled', alpha=0.5)
 ax.plot(x_pdf, y_pdf, '-k')
 
 ax.set_xlim(0, 10)

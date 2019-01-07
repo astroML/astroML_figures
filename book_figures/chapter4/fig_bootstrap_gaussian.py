@@ -61,11 +61,11 @@ pdf2 = norm(1, sigma2).pdf(x)
 # Plot the results
 fig, ax = plt.subplots(figsize=(5, 3.75))
 
-ax.hist(mu1_bootstrap, bins=50, normed=True, histtype='step',
+ax.hist(mu1_bootstrap, bins=50, density=True, histtype='step',
         color='blue', ls='dashed', label=r'$\sigma\ {\rm (std. dev.)}$')
 ax.plot(x, pdf1, color='gray')
 
-ax.hist(mu2_bootstrap, bins=50, normed=True, histtype='step',
+ax.hist(mu2_bootstrap, bins=50, density=True, histtype='step',
         color='red', label=r'$\sigma_G\ {\rm (quartile)}$')
 ax.plot(x, pdf2, color='gray')
 

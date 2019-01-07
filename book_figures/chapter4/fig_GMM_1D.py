@@ -87,7 +87,7 @@ logprob, responsibilities = M_best.score_samples(x)
 pdf = np.exp(logprob)
 pdf_individual = responsibilities * pdf[:, np.newaxis]
 
-ax.hist(X, 30, normed=True, histtype='stepfilled', alpha=0.4)
+ax.hist(X, 30, density=True, histtype='stepfilled', alpha=0.4)
 ax.plot(x, pdf, '-k')
 ax.plot(x, pdf_individual, '--k')
 ax.text(0.04, 0.96, "Best-fit Mixture",

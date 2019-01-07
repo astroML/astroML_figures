@@ -39,7 +39,7 @@ def plot_labeled_histogram(style, data, name,
         ax = plt.axes(ax)
 
     counts, bins, patches = hist(data, bins=style, ax=ax,
-                                 color='k', histtype='step', normed=True)
+                                 color='k', histtype='step', density=True)
     ax.text(0.95, 0.93, '%s:\n%i bins' % (name, len(counts)),
             transform=ax.transAxes,
             ha='right', va='top')

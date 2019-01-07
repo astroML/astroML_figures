@@ -63,7 +63,7 @@ fig.subplots_adjust(left=0.12, right=0.95, wspace=0.28,
 
 # left panel: plot the model and a histogram of the data
 ax1 = fig.add_subplot(121)
-ax1.hist(data, bins=np.linspace(0, 10, 11), normed=True,
+ax1.hist(data, bins=np.linspace(0, 10, 11), density=True,
          histtype='stepfilled', fc='gray', alpha=0.5)
 ax1.plot(x, px, '-k')
 ax1.set_xlim(-1, 11)

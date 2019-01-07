@@ -54,7 +54,7 @@ YLIM = (-0.09, 1.1)
 
 ax = fig1.add_subplot(121)
 bins = np.linspace(-1.8, 2.7, 13)
-ax.hist(x, bins=bins, normed=True,
+ax.hist(x, bins=bins, density=True,
         histtype='stepfilled', fc='k', alpha=0.3)
 ax.plot(XLIM, [0, 0], '-k', lw=1)
 ax.plot(x, 0 * x - 0.05, '+k')
@@ -65,7 +65,7 @@ ax.set_ylabel('$p(x)$')
 
 ax = fig1.add_subplot(122)
 ax.yaxis.set_major_formatter(plt.NullFormatter())
-ax.hist(x, bins=bins + 0.25, normed=True,
+ax.hist(x, bins=bins + 0.25, density=True,
         histtype='stepfilled', fc='k', alpha=0.3)
 ax.plot(XLIM, [0, 0], '-k', lw=1)
 ax.plot(x, 0 * x - 0.05, '+k')

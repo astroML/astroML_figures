@@ -51,7 +51,7 @@ sample_std = np.std(x_sample, ddof=1)
 # Plot the sampled data
 fig, ax = plt.subplots(figsize=(5, 3.75))
 
-ax.hist(x_sample, 20, histtype='stepfilled', normed=True, fc='#CCCCCC')
+ax.hist(x_sample, 20, histtype='stepfilled', density=True, fc='#CCCCCC')
 x = np.linspace(-2.1, 4.1, 1000)
 
 factor1 = ratio_in / (1. + ratio_in)
