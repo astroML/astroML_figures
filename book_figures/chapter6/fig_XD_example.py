@@ -20,7 +20,7 @@ that shown in the top-left panel.
 import numpy as np
 from matplotlib import pyplot as plt
 
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.density_estimation import XDGMM
 from astroML.plotting.tools import draw_ellipse
 

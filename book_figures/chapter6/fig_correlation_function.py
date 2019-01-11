@@ -23,7 +23,7 @@ from __future__ import print_function, division
 import numpy as np
 from matplotlib import pyplot as plt
 
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.datasets import fetch_sdss_specgals
 from astroML.correlation import bootstrap_two_point_angular
 

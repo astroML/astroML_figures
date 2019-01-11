@@ -12,7 +12,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import Ellipse
 
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.density_estimation import XDGMM
 from astroML.plotting.tools import draw_ellipse
 

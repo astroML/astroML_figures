@@ -28,7 +28,7 @@ from scipy.stats import norm
 from sklearn.mixture import GMM
 
 from astroML.datasets import fetch_sdss_sspp
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.plotting.tools import draw_ellipse
 
 #----------------------------------------------------------------------

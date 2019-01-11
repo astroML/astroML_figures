@@ -24,7 +24,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from astroML.classification import GMMBayes
 from sklearn.cross_validation import train_test_split
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.datasets import fetch_LINEAR_geneva
 
 #----------------------------------------------------------------------

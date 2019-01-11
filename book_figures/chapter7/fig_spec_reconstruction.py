@@ -22,7 +22,7 @@ from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 
 from astroML.datasets import sdss_corrected_spectra
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.

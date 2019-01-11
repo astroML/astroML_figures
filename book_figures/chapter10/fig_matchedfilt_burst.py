@@ -26,7 +26,7 @@ scipy.derivative = scipy.misc.derivative
 import pymc
 
 from astroML.plotting.mcmc import plot_mcmc
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.

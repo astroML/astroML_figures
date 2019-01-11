@@ -23,7 +23,7 @@ from matplotlib import pyplot as plt
 
 from sklearn.mixture import GMM
 from astroML.datasets import fetch_great_wall
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.

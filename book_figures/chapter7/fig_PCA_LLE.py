@@ -28,7 +28,7 @@ from sklearn import manifold, neighbors
 from astroML.datasets import sdss_corrected_spectra
 from astroML.datasets import fetch_sdss_corrected_spectra
 from astroML.plotting.tools import discretize_cmap
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
