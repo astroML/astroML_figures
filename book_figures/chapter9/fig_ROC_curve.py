@@ -69,6 +69,7 @@ def compute_models(*args):
 
     return names, probs
 
+
 names, probs = compute_models((GaussianNB, {}),
                               (LinearDiscriminantAnalysis, {}),
                               (QuadraticDiscriminantAnalysis, {}),
@@ -79,7 +80,7 @@ names, probs = compute_models((GaussianNB, {}),
                               (DecisionTreeClassifier,
                                dict(random_state=0, max_depth=12,
                                     criterion='entropy')),
-                              (GMMBayes, dict(n_components=3, min_covar=1E-5,
+                              (GMMBayes, dict(n_components=3, tol=1E-5,
                                               covariance_type='full')))
 
 #------------------------------------------------------------

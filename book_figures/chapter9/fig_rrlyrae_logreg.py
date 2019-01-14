@@ -78,7 +78,7 @@ xx, yy = np.meshgrid(np.linspace(xlim[0], xlim[1], 71),
                      np.linspace(ylim[0], ylim[1], 81))
 
 print(clf.intercept_)
-print(clf.raw_coef_)
+print(clf.coef_)
 
 Z = clf.predict_proba(np.c_[yy.ravel(), xx.ravel()])[:, 1]
 Z = Z.reshape(xx.shape)
