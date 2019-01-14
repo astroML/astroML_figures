@@ -16,7 +16,7 @@ from sklearn.decomposition import FastICA
 from sklearn.decomposition import RandomizedPCA
 
 from astroML.datasets import sdss_corrected_spectra
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #------------------------------------------------------------
 # Download data

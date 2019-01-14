@@ -20,7 +20,7 @@ from matplotlib import pyplot as plt
 
 from sklearn.ensemble import RandomForestRegressor
 from astroML.datasets import fetch_sdss_specgals
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.

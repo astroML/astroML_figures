@@ -21,7 +21,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from sklearn.svm import SVC
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.datasets import fetch_rrlyrae_combined
 from astroML.utils import split_samples
 from astroML.utils import completeness_contamination

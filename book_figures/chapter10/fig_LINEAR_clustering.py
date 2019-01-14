@@ -36,7 +36,7 @@ from matplotlib import pyplot as plt
 
 from sklearn.mixture import GaussianMixture
 
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.datasets import fetch_LINEAR_geneva
 
 #----------------------------------------------------------------------

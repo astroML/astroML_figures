@@ -25,7 +25,7 @@ from matplotlib import pyplot as plt
 from astroML.datasets import generate_mu_z
 from astroML.cosmology import Cosmology
 from astroML.plotting.mcmc import convert_to_stdev
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.

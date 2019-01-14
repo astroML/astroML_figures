@@ -20,7 +20,7 @@ from scipy import stats
 from matplotlib import pyplot as plt
 
 from astroML.stats.random import bivariate_normal
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 # percent sign must be escaped if usetex=True
 import matplotlib

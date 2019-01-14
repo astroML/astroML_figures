@@ -30,7 +30,7 @@ from astroML.density_estimation import XDGMM
 from astroML.crossmatch import crossmatch
 from astroML.datasets import fetch_sdss_S82standards, fetch_imaging_sample
 from astroML.plotting.tools import draw_ellipse
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.stats import sigmaG
 
 #----------------------------------------------------------------------

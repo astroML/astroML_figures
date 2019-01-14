@@ -20,7 +20,7 @@ from __future__ import print_function, division
 import numpy as np
 from matplotlib import pyplot as plt
 
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 from astroML.time_series import search_frequencies, lomb_scargle, MultiTermFit
 from astroML.datasets import fetch_LINEAR_sample
 

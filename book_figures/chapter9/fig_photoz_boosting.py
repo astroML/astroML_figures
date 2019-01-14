@@ -23,7 +23,7 @@ from matplotlib import pyplot as plt
 
 from sklearn.ensemble import GradientBoostingRegressor
 from astroML.datasets import fetch_sdss_specgals
-from astroML.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 
 #----------------------------------------------------------------------
