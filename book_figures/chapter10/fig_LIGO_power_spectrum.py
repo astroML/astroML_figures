@@ -1,3 +1,4 @@
+from __future__ import division
 """
 Plot the power spectrum of LIGO data
 ------------------------------------
@@ -55,7 +56,7 @@ fmax = 2060
 # compute PSD using simple FFT
 N = len(data)
 df = 1. / (N * dt)
-PSD = abs(dt * fftpack.fft(data)[:N / 2]) ** 2
+PSD = abs(dt * fftpack.fft(data)[:N // 2]) ** 2
 f = df * np.arange(N / 2)
 
 cutoff = ((f >= fmin) & (f <= fmax))
