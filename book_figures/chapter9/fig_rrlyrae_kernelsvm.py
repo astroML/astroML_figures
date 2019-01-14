@@ -70,7 +70,7 @@ def compute_SVM(Ncolors):
 
     for nc in Ncolors:
         # perform support vector classification
-        clf = SVC(kernel='rbf', gamma=20.0, class_weight='auto')
+        clf = SVC(kernel='rbf', gamma=20.0, class_weight='balanced')
         clf.fit(X_train[:, :nc], y_train)
         y_pred = clf.predict(X_test[:, :nc])
 

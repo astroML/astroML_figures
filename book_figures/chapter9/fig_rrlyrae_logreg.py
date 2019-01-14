@@ -56,7 +56,7 @@ predictions = []
 Ncolors = np.arange(1, X.shape[1] + 1)
 
 for nc in Ncolors:
-    clf = LogisticRegression(class_weight='auto')
+    clf = LogisticRegression(class_weight='balanced')
     clf.fit(X_train[:, :nc], y_train)
     y_pred = clf.predict(X_test[:, :nc])
 
