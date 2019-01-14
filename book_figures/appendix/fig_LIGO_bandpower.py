@@ -59,8 +59,8 @@ f = f[i]
 
 fig = plt.figure(figsize=(5, 3.75))
 plt.imshow(np.log10(P).T, origin='lower', aspect='auto',
-           extent=[t[window_size / 2],
-                   t[window_size / 2 + step_size * P.shape[0]],
+           extent=[t[window_size // 2],
+                   t[window_size // 2 + step_size * P.shape[0]],
                    f[0], f[-1]])
 plt.xlabel('t (s)')
 plt.ylabel('f (Hz) derived from %.2fs window' % (t[window_size] - t[0]))

@@ -1,3 +1,4 @@
+from __future__ import division
 """
 Joint and Conditional Probabilities
 -----------------------------------
@@ -18,7 +19,7 @@ different values of y (as marked in the left panel).
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.ticker import NullFormatter, NullLocator, MultipleLocator
+from matplotlib.ticker import NullFormatter
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -28,6 +29,7 @@ from matplotlib.ticker import NullFormatter, NullLocator, MultipleLocator
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
+
 
 def banana_distribution(N=10000):
     """This generates random points in a banana shape"""
@@ -112,7 +114,7 @@ ax_Py.xaxis.set_label_position('top')
 
 
 # draw marginal probabilities
-iy = [3 * Ngrid / 4, Ngrid / 2, Ngrid / 4]
+iy = [3 * Ngrid // 4, Ngrid // 2, Ngrid // 4]
 colors = 'rgc'
 axis = ax_Pxy.axis()
 for i in range(3):
