@@ -45,7 +45,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from scipy import sparse
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 from astroML.clustering import HierarchicalClustering, get_graph_segments
 from astroML.datasets import fetch_great_wall
@@ -89,7 +89,7 @@ T_trunc_x, T_trunc_y = get_graph_segments(model.X_train_,
                                           model.cluster_graph_)
 
 #------------------------------------------------------------
-# Fit a GMM to each individual cluster
+# Fit a GaussianMixture to each individual cluster
 Nx = 100
 Ny = 250
 Xgrid = np.vstack(map(np.ravel, np.meshgrid(np.linspace(xmin, xmax, Nx),
@@ -100,9 +100,8 @@ for i in range(n_components):
     ind = (labels == i)
     Npts = ind.sum()
     Nclusters = min(12, Npts // 5)
-
-    gmm = GMM(Nclusters, random_state=0).fit(X[ind])
-    dens = np.exp(gmm.score(Xgrid))
+    gmm = GaussianMixture(Nclusters, random_state=0).fit(X[ind])
+    dens = np.exp(gmm.score_samples(Xgrid))
     density += dens / dens.max()
 
 density = density.reshape((Ny, Nx))

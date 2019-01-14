@@ -22,7 +22,7 @@ are most likely to belong to class 1.
 #    https://groups.google.com/forum/#!forum/astroml-general
 from matplotlib import pyplot as plt
 import numpy as np
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -35,23 +35,17 @@ setup_text_plots(fontsize=8, usetex=True)
 
 #------------------------------------------------------------
 # Set up the dataset.
-#  We'll use scikit-learn's Gaussian Mixture Model to sample
-#  data from a mixture of Gaussians.  The usual way of using
-#  this involves fitting the mixture to data: we'll see that
-#  below.  Here we'll set the internal means, covariances,
-#  and weights by-hand.
-np.random.seed(1)
+#  We'll create our dataset by drawing samples from Gaussians.
 
-gmm = GMM(3, n_iter=1)
-gmm.means_ = np.array([[-1], [0], [3]])
-gmm.covars_ = np.array([[1.5], [1], [0.5]]) ** 2
-gmm.weights_ = np.array([0.3, 0.5, 0.2])
+random_state = np.random.RandomState(seed=1)
 
-X = gmm.sample(1000)
+X = np.concatenate([random_state.normal(-1, 1.5, 350),
+                    random_state.normal(0, 1, 500),
+                    random_state.normal(3, 0.5, 150)]).reshape(-1, 1)
 
 #------------------------------------------------------------
-# Learn the best-fit GMM models
-#  Here we'll use GMM in the standard way: the fit() method
+# Learn the best-fit GaussianMixture models
+#  Here we'll use scikit-learn's GaussianMixture model. The fit() method
 #  uses an Expectation-Maximization approach to find the best
 #  mixture of Gaussians for the data
 
@@ -60,7 +54,7 @@ N = np.arange(1, 11)
 models = [None for i in range(len(N))]
 
 for i in range(len(N)):
-    models[i] = GMM(N[i]).fit(X)
+    models[i] = GaussianMixture(N[i]).fit(X)
 
 # compute the AIC and the BIC
 AIC = [m.aic(X) for m in models]
@@ -83,7 +77,8 @@ ax = fig.add_subplot(131)
 M_best = models[np.argmin(AIC)]
 
 x = np.linspace(-6, 6, 1000)
-logprob, responsibilities = M_best.score_samples(x)
+logprob = M_best.score_samples(x.reshape(-1, 1))
+responsibilities = M_best.predict_proba(x.reshape(-1, 1))
 pdf = np.exp(logprob)
 pdf_individual = responsibilities * pdf[:, np.newaxis]
 
@@ -108,7 +103,7 @@ ax.legend(loc=2)
 # plot 3: posterior probabilities for each component
 ax = fig.add_subplot(133)
 
-p = M_best.predict_proba(x)
+p = responsibilities
 p = p[:, (1, 0, 2)]  # rearrange order so the plot looks better
 p = p.cumsum(1).T
 

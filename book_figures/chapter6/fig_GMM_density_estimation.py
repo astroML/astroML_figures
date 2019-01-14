@@ -6,10 +6,10 @@ Figure 6.8
 A comparison of different density estimation methods for two simulated
 one-dimensional data sets (same as in figure 6.5). Density estimators are
 Bayesian blocks (Section 5.7.2), KDE (Section 6.1.1), and a Gaussian mixture
-model. In the latter, the optimal number of Gaussian components is chosen using
-the BIC (eq. 5.35). In the top panel, GMM solution has three components but one
-of the components has a very large width and effectively acts as a nearly flat
-background.
+model. In the latter, the optimal number of Gaussian components is chosen
+using the BIC (eq. 5.35). In the top panel, GaussianMixture solution has
+three components but one of the components has a very large width and
+effectively acts as a nearly flat background.
 """
 # Author: Jake VanderPlas
 # License: BSD
@@ -23,7 +23,7 @@ from matplotlib import pyplot as plt
 from scipy import stats
 
 from astropy.visualization import hist
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 
 # Scikit-learn 0.14 added sklearn.neighbors.KernelDensity, which is a very
 # fast kernel density estimator based on a KD Tree.  We'll use this if
@@ -52,7 +52,7 @@ setup_text_plots(fontsize=8, usetex=True)
 #------------------------------------------------------------
 # Generate our data: a mix of several Cauchy distributions
 #  this is the same data used in the Bayesian Blocks figure
-np.random.seed(0)
+random_state = np.random.RandomState(seed=0)
 N = 10000
 mu_gamma_f = [(5, 1.0, 0.1),
               (7, 0.5, 0.5),
@@ -61,9 +61,9 @@ mu_gamma_f = [(5, 1.0, 0.1),
               (14, 1.0, 0.1)]
 true_pdf = lambda x: sum([f * stats.cauchy(mu, gamma).pdf(x)
                           for (mu, gamma, f) in mu_gamma_f])
-x = np.concatenate([stats.cauchy(mu, gamma).rvs(int(f * N))
+x = np.concatenate([stats.cauchy(mu, gamma).rvs(int(f * N), random_state=random_state)
                     for (mu, gamma, f) in mu_gamma_f])
-np.random.shuffle(x)
+random_state.shuffle(x)
 x = x[x > -10]
 x = x[x < 30]
 
@@ -92,11 +92,11 @@ for N, k, subplot in zip(N_values, k_values, subplots):
     # Compute density via Gaussian Mixtures
     # we'll try several numbers of clusters
     n_components = np.arange(3, 16)
-    gmms = [GMM(n_components=n).fit(xN) for n in n_components]
-    BICs = [gmm.bic(xN) for gmm in gmms]
+    gmms = [GaussianMixture(n_components=n).fit(xN.reshape(-1, 1)) for n in n_components]
+    BICs = [gmm.bic(xN.reshape(-1, 1)) for gmm in gmms]
     i_min = np.argmin(BICs)
     t = np.linspace(-10, 30, 1000)
-    logprob, responsibilities = gmms[i_min].score_samples(t)
+    logprob = gmms[i_min].score_samples(t.reshape(-1, 1))
 
     # plot the results
     ax.plot(t, true_pdf(t), ':', color='black', zorder=3,

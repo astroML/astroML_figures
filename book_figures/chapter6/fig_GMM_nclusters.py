@@ -23,8 +23,7 @@ from __future__ import print_function, division
 
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.stats import norm
-from sklearn.mixture import GMM
+from sklearn.mixture import GaussianMixture
 from astroML.utils import convert_2D_cov
 from astroML.plotting.tools import draw_ellipse
 
@@ -51,11 +50,13 @@ clusters = [((50, 50), 20, 20, 0, 0.1),
             ((80, 80), 5, 5, np.pi / 3, 0.2),
             ((60, 60), 30, 30, 0, 0.1)]
 
-gmm_input = GMM(len(clusters), covariance_type='full')
+gmm_input = GaussianMixture(len(clusters), covariance_type='full')
 gmm_input.means_ = np.array([c[0] for c in clusters])
-gmm_input.covars_ = np.array([convert_2D_cov(*c[1:4]) for c in clusters])
+gmm_input.covariances_ = np.array([convert_2D_cov(*c[1:4]) for c in clusters])
 gmm_input.weights_ = np.array([c[4] for c in clusters])
 gmm_input.weights_ /= gmm_input.weights_.sum()
+gmm_input.precisions_cholesky_ = 1 / np.sqrt(gmm_input.covariances_)
+gmm_input.fit = None
 
 #------------------------------------------------------------
 # Compute and plot the results
@@ -74,10 +75,10 @@ Xgrid = Xgrid.reshape(2, -1).T
 Nclusters = np.arange(1, 8)
 for Npts, ax, ls in zip([100, 1000, 10000], ax_list, linestyles):
     np.random.seed(1)
-    X = gmm_input.sample(Npts)
+    X = gmm_input.sample(Npts)[0]
 
     # find best number of clusters via BIC
-    clfs = [GMM(N, n_iter=500).fit(X)
+    clfs = [GaussianMixture(N, max_iter=500).fit(X)
             for N in Nclusters]
     BICs = np.array([clf.bic(X) for clf in clfs])
     print("{0} points convergence:".format(Npts),
@@ -88,7 +89,7 @@ for Npts, ax, ls in zip([100, 1000, 10000], ax_list, linestyles):
                     label="N=%i" % Npts)
 
     clf = clfs[np.argmin(BICs)]
-    log_dens = clf.score(Xgrid).reshape((70, 70))
+    log_dens = clf.score_samples(Xgrid).reshape((70, 70))
 
     # scatter the points
     ax.plot(X[:, 0], X[:, 1], ',k', alpha=0.3, zorder=1)
@@ -96,7 +97,7 @@ for Npts, ax, ls in zip([100, 1000, 10000], ax_list, linestyles):
     # plot the components
     for i in range(clf.n_components):
         mean = clf.means_[i]
-        cov = clf.covars_[i]
+        cov = clf.covariances_[i]
         if cov.ndim == 1:
             cov = np.diag(cov)
         draw_ellipse(mean, cov, ax=ax, fc='none', ec='k', zorder=2)
