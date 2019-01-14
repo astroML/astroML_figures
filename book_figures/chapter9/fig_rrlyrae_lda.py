@@ -1,11 +1,11 @@
 """
-LDA Classification of photometry
---------------------------------
+LinearDiscriminantAnalysis Classification of photometry
+-------------------------------------------------------
 Figure 9.4
 
 The linear discriminant boundary for RR Lyrae stars (see caption of figure 9.3
-for details). With all four colors, LDA achieves a completeness of 0.672 and a
-contamination of 0.806.
+for details). With all four colors, LinearDiscriminantAnalysis achieves a
+completeness of 0.672 and a contamination of 0.806.
 """
 # Author: Jake VanderPlas
 # License: BSD
@@ -19,9 +19,8 @@ from __future__ import print_function
 
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib import colors
 
-from sklearn.lda import LDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 from astroML.datasets import fetch_rrlyrae_combined
 from astroML.utils import split_samples
@@ -51,13 +50,13 @@ N_test = len(y_test)
 N_plot = 5000 + N_rr
 
 #----------------------------------------------------------------------
-# perform LDA
+# perform LinearDiscriminantAnalysis
 classifiers = []
 predictions = []
 Ncolors = np.arange(1, X.shape[1] + 1)
 
 for nc in Ncolors:
-    clf = LDA()
+    clf = LinearDiscriminantAnalysis()
     clf.fit(X_train[:, :nc], y_train)
     y_pred = clf.predict(X_test[:, :nc])
 

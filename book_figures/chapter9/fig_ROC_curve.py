@@ -24,14 +24,14 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from sklearn.naive_bayes import GaussianNB
-from sklearn.lda import LDA
-from sklearn.qda import QDA
+from sklearn.discriminant_analysis import (LinearDiscriminantAnalysis,
+                                           QuadraticDiscriminantAnalysis)
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from astroML.classification import GMMBayes
 
-from sklearn.metrics import precision_recall_curve, roc_curve
+from sklearn.metrics import roc_curve
 
 from astroML.utils import split_samples, completeness_contamination
 from astroML.datasets import fetch_rrlyrae_combined
@@ -69,17 +69,18 @@ def compute_models(*args):
 
     return names, probs
 
+
 names, probs = compute_models((GaussianNB, {}),
-                              (LDA, {}),
-                              (QDA, {}),
+                              (LinearDiscriminantAnalysis, {}),
+                              (QuadraticDiscriminantAnalysis, {}),
                               (LogisticRegression,
-                               dict(class_weight='auto')),
+                               dict(class_weight='balanced')),
                               (KNeighborsClassifier,
                                dict(n_neighbors=10)),
                               (DecisionTreeClassifier,
                                dict(random_state=0, max_depth=12,
                                     criterion='entropy')),
-                              (GMMBayes, dict(n_components=3, min_covar=1E-5,
+                              (GMMBayes, dict(n_components=3, tol=1E-5,
                                               covariance_type='full')))
 
 #------------------------------------------------------------
@@ -95,8 +96,8 @@ ax1 = plt.subplot(121)
 ax2 = plt.subplot(122)
 
 labels = dict(GaussianNB='GNB',
-              LDA='LDA',
-              QDA='QDA',
+              LinearDiscriminantAnalysis='LDA',
+              QuadraticDiscriminantAnalysis='QDA',
               KNeighborsClassifier='KNN',
               DecisionTreeClassifier='DT',
               GMMBayes='GMMB',
