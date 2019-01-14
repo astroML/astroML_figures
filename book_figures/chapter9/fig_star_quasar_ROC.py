@@ -26,8 +26,8 @@ from astroML.utils import split_samples
 
 from sklearn.metrics import roc_curve
 from sklearn.naive_bayes import GaussianNB
-from sklearn.lda import LDA
-from sklearn.qda import QDA
+from sklearn.discriminant_analysis import (LinearDiscriminantAnalysis,
+                                           QuadraticDiscriminantAnalysis)
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -98,8 +98,8 @@ def compute_results(*args):
 LRclass_weight = dict([(i, np.sum(y_train == i)) for i in (0, 1)])
 
 names, probs = compute_results((GaussianNB, {}),
-                               (LDA, {}),
-                               (QDA, {}),
+                               (LinearDiscriminantAnalysis, {}),
+                               (QuadraticDiscriminantAnalysis, {}),
                                (LogisticRegression,
                                 dict(class_weight=LRclass_weight)),
                                (KNeighborsClassifier,
@@ -127,8 +127,8 @@ ax1.set_xlabel('$u - g$')
 ax1.set_ylabel('$g - r$')
 
 labels = dict(GaussianNB='GNB',
-              LDA='LDA',
-              QDA='QDA',
+              LinearDiscriminantAnalysis='LDA',
+              QuadraticDiscriminantAnalysis='QDA',
               KNeighborsClassifier='KNN',
               DecisionTreeClassifier='DT',
               GMMBayes='GMMB',
