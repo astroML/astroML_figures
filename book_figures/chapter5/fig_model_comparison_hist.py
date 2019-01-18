@@ -40,7 +40,7 @@ np.random.seed(10)
 gm = GaussianMixture1D([mu1_in, mu2_in],
                        [sigma1_in, sigma2_in],
                        [ratio_in, 1])
-x_sample = gm.sample(N)
+x_sample = gm.sample(N)[0]
 
 #------------------------------------------------------------
 # Get the MLE fit for a single gaussian

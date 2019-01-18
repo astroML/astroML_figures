@@ -66,10 +66,11 @@ Xerr[:, diag, diag] = np.vstack([dx ** 2, dy ** 2]).T
 #------------------------------------------------------------
 # compute and save results
 @pickle_results("XD_toy.pkl")
-def compute_XD_results(n_components=10, n_iter=500):
-    clf = XDGMM(n_components, n_iter=n_iter)
+def compute_XD_results(n_components=10, max_iter=500):
+    clf = XDGMM(n_components, max_iter=max_iter)
     clf.fit(X, Xerr)
     return clf
+
 
 clf = compute_XD_results(10, 500)
 sample = clf.sample(N)
