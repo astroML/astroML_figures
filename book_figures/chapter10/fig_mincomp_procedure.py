@@ -100,7 +100,7 @@ spec_filt += spec_fit
 #----------------------------------------------------------------------
 # plot results
 fig = plt.figure(figsize=(5, 3.75))
-fig.subplots_adjust(hspace=0.25)
+fig.subplots_adjust(hspace=0.35)
 
 ax = fig.add_subplot(211)
 ax.plot(lam, spec, '-', c='gray')

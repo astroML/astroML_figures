@@ -9,7 +9,7 @@ noise is added to the observations, with a width drawn from a uniform
 distribution with 0.5 < sigma < 1.0. Data are shown in the top panel and the
 resulting Lomb-Scargle periodogram is shown in the bottom panel. The arrow
 marks the location of the true period. The dotted lines show the 1% and 5%
-significance levels for the highest peak, determined by 1000 bootstrap 
+significance levels for the highest peak, determined by 1000 bootstrap
 resamplings (see Section 10.3.2). The change in BIC compared to a nonvarying
 source (eq. 10.55) is shown on the right y-axis. The maximum power corresponds
 to a delta-BIC = 26.1,indicating the presence of a periodic signal.
@@ -62,7 +62,7 @@ sig1, sig5 = np.percentile(D, [99, 95])
 #------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 3.75))
-fig.subplots_adjust(left=0.1, right=0.9, hspace=0.25)
+fig.subplots_adjust(left=0.1, right=0.9, hspace=0.35)
 
 # First panel: the data
 ax = fig.add_subplot(211)

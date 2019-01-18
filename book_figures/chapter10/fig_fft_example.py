@@ -49,7 +49,7 @@ hj *= norm(0, 10).pdf(tj)
 #------------------------------------------------------------
 # plot the results
 fig = plt.figure(figsize=(5, 3.75))
-fig.subplots_adjust(hspace=0.25)
+fig.subplots_adjust(hspace=0.35)
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 

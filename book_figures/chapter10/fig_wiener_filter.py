@@ -67,7 +67,7 @@ f = fftpack.ifftshift(Df * (np.arange(N) - N / 2))
 HN = fftpack.fft(hN)
 
 fig = plt.figure(figsize=(5, 3.75))
-fig.subplots_adjust(wspace=0.05, hspace=0.25,
+fig.subplots_adjust(wspace=0.05, hspace=0.35,
                     bottom=0.1, top=0.95,
                     left=0.12, right=0.95)
 

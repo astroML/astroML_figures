@@ -19,7 +19,6 @@ projecting the data, preventing the mixing of the colors.
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib
 from matplotlib import ticker
 
 from sklearn import manifold, datasets, decomposition

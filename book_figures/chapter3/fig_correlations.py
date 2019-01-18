@@ -91,7 +91,7 @@ results = compute_results(N, Nbootstraps)
 #------------------------------------------------------------
 # Plot the results in a three-panel plot
 fig = plt.figure(figsize=(5, 5))
-fig.subplots_adjust(bottom=0.1, top=0.95, hspace=0.25)
+fig.subplots_adjust(bottom=0.1, top=0.95, hspace=0.35)
 
 histargs = (dict(alpha=0.5, label='No Outliers'),
             dict(alpha=0.8, label='%i%s Outliers' % (int(f * 100), pct)))
@@ -118,7 +118,7 @@ for i in range(3):
     ax.set_ylim(ylim)
 
     ax.text(0.98, 0.95, distributions[i], ha='right', va='top',
-            transform=ax.transAxes, bbox=dict(fc='w', ec='w'))
+            transform=ax.transAxes)
 
     ax.set_xlabel('$%s$' % xlabels[i])
     ax.set_ylabel('$N(%s)$' % xlabels[i])
