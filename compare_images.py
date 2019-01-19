@@ -24,7 +24,7 @@ TABLE = """
 
 ROW = """
 <tr>
-  <td align="center">{0}</td>
+  <td align="center">Difference {0}</td>
   <td align="center">actual</td>
   <td align="center">baseline</td>
 </tr>
@@ -40,16 +40,22 @@ results = "astroML_fig_tests/results/book_figures"
 
 figlist = []
 
-for chapter in os.listdir(results):
-    if not os.path.isdir(os.path.join(results,chapter)):
+for chapter in os.listdir(baseline):
+    if not os.path.isdir(os.path.join(results, chapter)):
+        print("Results for {} doesn't exist.".format(chapter))
         continue
-    for pyfile in os.listdir(os.path.join(results,chapter)):
-        if pyfile.endswith('failed-diff.png'):
-            root = pyfile.split('-failed-diff')[0]
-            figlist.append((os.path.join("book_figures", chapter, root + ".py"),
-                            os.path.join(results, chapter, pyfile),
+    for pyfile in os.listdir(os.path.join(baseline, chapter)):
+        if os.path.join(results, chapter, os.path.basename(pyfile)[:-4]+"-failed-diff.png"):
+            root = pyfile.split('.png')[0]
+            figlist.append((os.path.join("book_figures", chapter, root),
+                            os.path.join(results, chapter, os.path.basename(root)+"-failed-diff.png"),
                             os.path.join(results, chapter, root + '.png'),
                             os.path.join(baseline, chapter, root + '.png')))
+        elif not os.path.exists(os.path.join(results, chapter, os.path.basename(pyfile))):
+            figlist.append((os.path.join(pyfile.split('.png')),
+                            '',
+                            '',
+                            pyfile))
 
 
 outfile = "_compare_images.html"
@@ -60,4 +66,3 @@ with open(outfile, 'w') as f:
 
 import webbrowser
 webbrowser.open_new("file://localhost" + os.path.abspath(outfile))
-                           
