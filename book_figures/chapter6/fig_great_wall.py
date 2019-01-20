@@ -24,10 +24,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm
 
-from scipy.spatial import cKDTree
-
+from sklearn.neighbors import KernelDensity
 from astroML.datasets import fetch_great_wall
-from astroML.density_estimation import KDE, KNeighborsDensity
+from astroML.density_estimation import KNeighborsDensity
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -54,8 +53,9 @@ ymin, ymax = (-300, 200)
 Xgrid = np.vstack(map(np.ravel, np.meshgrid(np.linspace(xmin, xmax, Nx),
                                             np.linspace(ymin, ymax, Ny)))).T
 
-kde = KDE(metric='gaussian', h=5)
-dens_KDE = kde.fit(X).eval(Xgrid).reshape((Ny, Nx))
+kde = KernelDensity(kernel='gaussian', bandwidth=5)
+log_pdf_kde = kde.fit(X).score_samples(Xgrid).reshape((Ny, Nx))
+dens_KDE = np.exp(log_pdf_kde)
 
 knn5 = KNeighborsDensity('bayesian', 5)
 dens_k5 = knn5.fit(X).eval(Xgrid).reshape((Ny, Nx))
