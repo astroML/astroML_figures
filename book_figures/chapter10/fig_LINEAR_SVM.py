@@ -23,8 +23,7 @@ from __future__ import print_function
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.svm import SVC
-from sklearn.cross_validation import train_test_split
-from astroML.utils.decorators import pickle_results
+from sklearn.model_selection import train_test_split
 from astroML.datasets import fetch_LINEAR_geneva
 
 #----------------------------------------------------------------------
@@ -101,7 +100,7 @@ for i in range(2):
     Xtest = X[i][i_test]
     ytest = y[i][i_test]
     amp = data['amp'][i_test]
-    
+
     # Plot the resulting classifications
     ax1 = fig.add_subplot(221 + 2 * i)
     ax1.scatter(Xtest[:, 0], Xtest[:, 1],
@@ -165,7 +164,7 @@ if len(sys.argv) > 1 and sys.argv[1] == '--save':
     new_data = np.zeros(len(data),
                         dtype=(ARCHIVE_DTYPE + [('2D_cluster_ID', 'i4'),
                                                 ('7D_cluster_ID', 'i4')]))
-    
+
     # switch the labels back 3->6
     for i in range(2):
         ypred[i][ypred[i] == 3] = 6
