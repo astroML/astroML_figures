@@ -20,7 +20,6 @@ scaling.
 import numpy as np
 from matplotlib import pyplot as plt
 
-from sklearn.decomposition import RandomizedPCA
 from astroML.datasets import sdss_corrected_spectra
 
 #----------------------------------------------------------------------

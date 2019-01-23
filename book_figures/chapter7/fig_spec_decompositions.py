@@ -21,9 +21,7 @@ emission). The ordering of the spectral components is technique dependent.
 import numpy as np
 from matplotlib import pyplot as plt
 
-from sklearn.decomposition import NMF
-from sklearn.decomposition import FastICA
-from sklearn.decomposition import RandomizedPCA
+from sklearn.decomposition import NMF, FastICA, PCA
 
 from astroML.datasets import sdss_corrected_spectra
 from astroML.utils.decorators import pickle_results
@@ -52,7 +50,7 @@ def compute_PCA_ICA_NMF(n_components=5):
     spec_mean = spectra.mean(0)
 
     # PCA: use randomized PCA for speed
-    pca = RandomizedPCA(n_components - 1, random_state=0)
+    pca = PCA(n_components - 1, random_state=0, svd_solver='randomized')
     pca.fit(spectra)
     pca_comp = np.vstack([spec_mean,
                           pca.components_])
@@ -116,8 +114,8 @@ for i, comp in enumerate(decompositions):
         ax.text(0.03, 0.94, label, transform=ax.transAxes,
                 ha='left', va='top')
 
-        for l in ax.get_xticklines() + ax.get_yticklines(): 
-            l.set_markersize(2) 
+        for l in ax.get_xticklines() + ax.get_yticklines():
+            l.set_markersize(2)
 
         # adjust y limits
         ylim = plt.ylim()
