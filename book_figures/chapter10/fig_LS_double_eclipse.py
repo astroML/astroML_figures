@@ -22,6 +22,7 @@ signal shape significantly differs from a single sinusoid.
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
+import matplotlib
 from matplotlib import pyplot as plt
 
 from astroML.time_series import multiterm_periodogram, MultiTermFit
@@ -35,6 +36,7 @@ from astroML.datasets import fetch_LINEAR_sample
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
+matplotlib.rcParams['axes.xmargin'] = 0
 
 #------------------------------------------------------------
 # Get data
@@ -100,6 +102,7 @@ for i, f in enumerate(factors):
     ax1.legend(loc=2)
 
     ax1.axis('tight')
+
     ax1.set_ylim(-0.05, 1.001)
     ax1.xaxis.set_major_locator(plt.MultipleLocator(0.01))
     ax1.xaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))

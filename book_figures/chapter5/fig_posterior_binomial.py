@@ -18,7 +18,8 @@ distribution (p_true(< 0.1) ~ 0.003).
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
-from scipy.stats import norm, binom
+import matplotlib
+from scipy.stats import norm
 from matplotlib import pyplot as plt
 
 #----------------------------------------------------------------------
@@ -29,6 +30,7 @@ from matplotlib import pyplot as plt
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
+matplotlib.rcParams['axes.xmargin'] = 0
 
 #------------------------------------------------------------
 # Plot posterior as a function of b

@@ -28,6 +28,7 @@ a single peak and the spectral window.
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
+import matplotlib
 from matplotlib import pyplot as plt
 
 from astroML.time_series import lomb_scargle
@@ -40,6 +41,7 @@ from astroML.time_series import lomb_scargle
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
+matplotlib.rcParams['axes.xmargin'] = 0
 
 #------------------------------------------------------------
 # Generate the data

@@ -124,6 +124,7 @@ for typo in [True, False]:
 
     ax.set_xlabel('$\omega$')
     ax.set_ylabel(r'$P_{\rm LS}(\omega)$')
+    ax.set_xlim(xlim)
     ax.set_ylim(0, 1.1)
 
 
