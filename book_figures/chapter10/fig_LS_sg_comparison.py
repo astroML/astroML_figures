@@ -140,7 +140,7 @@ P = 0.3
 
 t = P / 2 * np.random.random(N) + P * np.random.randint(1000, size=N)
 y = 10 + np.sin(2 * np.pi * t / P)
-dy = 0.1 + 0.1 * np.random.random(N)
+dy = 0.5 + 0.5 * np.random.random(N)
 y_obs = y + np.random.normal(dy)
 
 omega_0 = 2 * np.pi / P
