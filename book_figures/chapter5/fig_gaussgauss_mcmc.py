@@ -92,7 +92,6 @@ model = dict(mu=mu, log_sigma=log_sigma, sigma=sigma,
 
 #------------------------------------------------------------
 # perform the MCMC sampling
-np.random.seed(0)
 S = pymc.MCMC(model)
 S.sample(iter=25000, burn=2000)
 
