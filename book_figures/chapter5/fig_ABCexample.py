@@ -14,9 +14,6 @@ for a sample drawn from Gaussian distribution with known scale parameter.
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy import stats, interpolate
-from astroML.density_estimation import EmpiricalDistribution
-from math import sqrt
 from scipy.stats import norm
 
 #----------------------------------------------------------------------
@@ -33,42 +30,44 @@ def plotABC(theta, weights, Niter, data, muTrue, sigTrue):
     Nresample = 100000
     Ndata = np.size(data)
     xmean = np.mean(data)
-    sigPosterior = sigTrue/np.sqrt(Ndata)
+    sigPosterior = sigTrue / np.sqrt(Ndata)
     truedist = norm(xmean, sigPosterior)
     x = np.linspace(-10, 10, 1000)
-    for j in range(0,Niter):
+    for j in range(0, Niter):
         meanT[j] = np.mean(theta[j])
         stdT[j] = np.std(theta[j])
 
     # plot
     fig = plt.figure(figsize=(5, 3.75))
     fig.subplots_adjust(left=0.1, right=0.95, wspace=0.24,
-                    bottom=0.1, top=0.95)
+                        bottom=0.1, top=0.95)
 
     # last few iterations
     ax1 = fig.add_axes((0.55, 0.1, 0.35, 0.38))
     ax1.set_xlabel(r'$\mu$')
     ax1.set_ylabel(r'$p(\mu)$')
-    ax1.set_xlim(1.0,3.0)
+    ax1.set_xlim(1.0, 3.0)
     ax1.set_ylim(0, 2.5)
-    for j in [15,20,25]:
+    for j in [15, 20, 25]:
         sample = weightedResample(theta[j], Nresample, weights[j])
-        ax1.hist(sample, 20, normed=True, histtype='stepfilled', alpha=0.9-(0.04*(j-15)))
+        ax1.hist(sample, 20, density=True, histtype='stepfilled',
+                 alpha=0.9-(0.04*(j-15)))
     ax1.plot(x, truedist.pdf(x), 'r')
 
     # first few iterations
     ax2 = fig.add_axes((0.1, 0.1, 0.35, 0.38))
     ax2.set_xlabel(r'$\mu$')
     ax2.set_ylabel(r'$p(\mu)$')
-    ax2.set_xlim(-4.0,8.0)
+    ax2.set_xlim(-4.0, 8.0)
     ax2.set_ylim(0, 0.5)
-    for j in [2,4,6]:
+    for j in [2, 4, 6]:
         sample = weightedResample(theta[j], Nresample, weights[j])
-        ax2.hist(sample, 20, normed=True, histtype='stepfilled', alpha=(0.9-0.1*(j-2)))
+        ax2.hist(sample, 20, density=True, histtype='stepfilled',
+                 alpha=(0.9-0.1*(j-2)))
 
     # mean and scatter vs. iteration number
     ax3 = fig.add_axes((0.55, 0.60, 0.35, 0.38))
-    ax3.set_xlabel(r'$iteration$')
+    ax3.set_xlabel('iteration')
     ax3.set_ylabel(r'$<\mu> \pm \, \sigma_\mu$')
     ax3.set_xlim(0, Niter)
     ax3.set_ylim(0, 4)
@@ -85,53 +84,61 @@ def plotABC(theta, weights, Niter, data, muTrue, sigTrue):
     ax4.set_ylabel(r'$p(x)$')
     ax4.set_xlim(-5, 9)
     ax4.set_ylim(0, 0.26)
-    ax4.hist(data, 15, normed=True, histtype='stepfilled', alpha=0.8)
+    ax4.hist(data, 15, density=True, histtype='stepfilled', alpha=0.8)
     datadist = norm(muTrue, sigTrue)
     ax4.plot(x, datadist.pdf(x), 'r')
     ax4.plot([xmean, xmean], [0.02, 0.07], c='r')
     ax4.plot(data, 0.25 * np.ones(len(data)), '|k')
 
-    plt.savefig('ABCexample.png')
     plt.show()
+
 
 #----------------------------------------------------------------------
 def distance(x, y):
     return np.abs(np.mean(x) - np.mean(y))
 
+
 def weightedResample(x, N, weights):
     # resample N elements from x, with selection prob. proportional to weights
-    p = 1.0*weights/np.sum(weights)
+    p = weights / np.sum(weights)
     return np.random.choice(x, size=N, replace=True, p=p)
+
 
 # return the kernel values
 def kernelValues(prevThetas, prevStdDev, currentTheta):
     return norm(currentTheta, prevStdDev).pdf(prevThetas)
-    # return np.exp(-0.5*(prevThetas-currentTheta)**2/prevStdDev**2)
+
 
 # return new values, scattered around an old value using kernel
 def kernelSample(theta, stdDev, Nsample=1):
     return np.random.normal(theta, stdDev, Nsample)
 
+
 # compute new weight
 def computeWeight(prevWeights, prevThetas, prevStdDev, currentTheta):
     denom = prevWeights * kernelValues(prevThetas, prevStdDev, currentTheta)
-    return prior(currentTheta, prevThetas)/np.sum(denom)
+    return prior(currentTheta, prevThetas) / np.sum(denom)
+
 
 # flat prior probability
 def prior(thisTheta, allThetas):
-    return 1.0/np.size(allThetas)
+    return 1.0 / np.size(allThetas)
+
 
 def getData(Ndata, mu, sigma):
     # use simulated data
     return simulateData(Ndata, mu, sigma)
 
+
 def simulateData(Ndata, mu, sigma):
     # simple gaussian toy model
     return np.random.normal(mu, sigma, Ndata)
 
+
 def KLscatter(x, w, N):
     sample = weightedResample(x, N, w)
     return np.sqrt(2) * np.std(sample)
+
 
 #----------------------------------------------------------------------
 np.random.seed(0)    # for repeatability
@@ -152,9 +159,9 @@ thetaMax = 10
 Ndraw = 1000
 Niter = 26
 DpercCut = 80
-theta = np.empty([Niter,Ndraw])
-weights = np.empty([Niter,Ndraw])
-D = np.empty([Niter,Ndraw])
+theta = np.empty([Niter, Ndraw])
+weights = np.empty([Niter, Ndraw])
+D = np.empty([Niter, Ndraw])
 eps = np.empty([Niter])
 meanT = np.zeros(Niter)
 stdT = np.zeros(Niter)
@@ -165,20 +172,23 @@ for i in range(0, Ndraw):
     sample = simulateData(Ndata, thetaS, sigmaTrue)
     D[0][i] = distance(data, sample)
     theta[0][i] = thetaS
-weights[0] = 1.0/Ndraw
+
+weights[0] = 1.0 / Ndraw
 scatter = KLscatter(theta[0], weights[0], Ndraw)
 eps[0] = np.percentile(D[0], 50)
 
-## ABC iterations:
+
+# ABC iterations:
 ssTot = 0
 verbose = False
-for j in range(1,Niter):
+
+for j in range(1, Niter):
     print('iteration:', j)
     thetaOld = theta
-    weightsOld = weights/np.sum(weights)
-    ## sample until distance condition fullfilled
+    weightsOld = weights / np.sum(weights)
+    # sample until distance condition fullfilled
     ss = 0
-    for i in range(0,Ndraw):
+    for i in range(0, Ndraw):
         notdone = True
         while notdone:
             ss += 1
