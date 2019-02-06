@@ -2,10 +2,10 @@
 Neural Network Diagram
 ----------------------
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas & Brigitta Sipocz
 # License: BSD
 #   The figure produced by this code is published in the textbook
-#   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
+#   "Statistics, Data Mining, and Machine Learning in Astronomy" (2019)
 #   For more information, see http://astroML.github.com
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
@@ -20,9 +20,9 @@ from matplotlib import pyplot as plt
 # you can set usetex to False.
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
-setup_text_plots(fontsize=8, usetex=True)
+setup_text_plots(fontsize=16, usetex=True)
 
-fig = plt.figure(figsize=(5, 3.75), facecolor='w')
+fig = plt.figure(figsize=(6, 4), facecolor='w')
 ax = fig.add_axes([0, 0, 1, 1],
                   xticks=[], yticks=[])
 plt.box(False)
@@ -53,40 +53,52 @@ def draw_circle(ax, center, radius):
     circ = plt.Circle(center, radius, fc='none', lw=2)
     ax.add_patch(circ)
 
-x1 = -2
+x1 = -3
 x2 = 0
-x3 = 2
-y3 = 0
+x3 = 3
+y3 = -0.75
 
 #------------------------------------------------------------
 # draw circles
-for i, y1 in enumerate(np.linspace(1.5, -1.5, 4)):
+for i, y1 in enumerate(np.linspace(0.5, -2, 2)):
     draw_circle(ax, (x1, y1), radius)
-    ax.text(x1 - 0.9, y1, 'Input #%i' % (i + 1),
-            ha='right', va='center', fontsize=16)
+    ax.text(x1 - 0.9, y1, '$x_{}$'.format(i + 1),
+            ha='right', va='center')
     draw_connecting_arrow(ax, (x1 - 0.9, y1), 0.1, (x1, y1), radius)
 
-for y2 in np.linspace(-2, 2, 5):
+for i, y2 in enumerate(np.linspace(1, -2.5, 3)):
     draw_circle(ax, (x2, y2), radius)
-
+    ax.text(x2, y2, r'$f(\theta)$', fontsize=12, ha='center', va='center')
+    ax.text(x2 + 0.4, y2 * 1.1 - np.sign(y2) * 0.1, '$a_{}$'.format(i + 1))
 draw_circle(ax, (x3, y3), radius)
-ax.text(x3 + 0.8, y3, 'Output', ha='left', va='center', fontsize=16)
+ax.text(x3 + 0.8, y3, '$y_k$', ha='left', va='center')
 draw_connecting_arrow(ax, (x3, y3), radius, (x3 + 0.8, y3), 0.1)
+ax.text(x3, y3, r'$g(\theta)$', fontsize=12, ha='center', va='center')
 
 #------------------------------------------------------------
 # draw connecting arrows
-for y1 in np.linspace(-1.5, 1.5, 4):
-    for y2 in np.linspace(-2, 2, 5):
+for i, y1 in enumerate(np.linspace(0.5, -2, 2)):
+    for j, y2 in enumerate(np.linspace(1, -2.5, 3)):
         draw_connecting_arrow(ax, (x1, y1), radius, (x2, y2), radius)
+        if i % 2 == 0:
+            va = 'bottom'
+            shift = 0.1
+        else:
+            va='top'
+            shift = -0.1
+        ax.text((2*x1+x2)/3, (2*y1+y2)/3 + shift, '$w_{%s%s}$' % ((i+1), (j+1)), va=va, fontsize=12, ha='center')
 
-for y2 in np.linspace(-2, 2, 5):
+for i, y2 in enumerate(np.linspace(1, -2.5, 3)):
     draw_connecting_arrow(ax, (x2, y2), radius, (x3, y3), radius)
+    ax.text((x2+x3)/2, (y2+y3)/2 + 0.1, '$w_{%sk}$' % (i+1), fontsize=12, ha='center', va='bottom')
 
 #------------------------------------------------------------
 # Add text labels
-plt.text(x1, 2.7, "Input\nLayer", ha='center', va='top', fontsize=16)
-plt.text(x2, 2.7, "Hidden Layer", ha='center', va='top', fontsize=16)
-plt.text(x3, 2.7, "Output\nLayer", ha='center', va='top', fontsize=16)
+plt.text(x1, 2.7, "Input Layer", ha='center', va='top')
+plt.text(x2, 2.7, r"Hidden Layer\\\\ $a_j=f(\sum_{i=1}^N w_{ij} x_i)$",
+         ha='center', va='top')
+plt.text(x3, 2.7, r"Output Layer\\\\ $y_k=g(\sum_{j=1}^M w_{jk} a_j)$",
+         ha='center', va='top')
 
 ax.set_aspect('equal')
 plt.xlim(-4, 4)
