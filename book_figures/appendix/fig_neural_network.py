@@ -66,10 +66,10 @@ for i, y1 in enumerate(np.linspace(1.5, -2.5, 5)):
             ha='right', va='center')
     draw_connecting_arrow(ax, (x1 - 0.9, y1), 0.1, (x1, y1), radius)
 
-for i, y2 in enumerate(np.linspace(1, -2.5, 4)):
+for i, y2 in enumerate(np.linspace(1.25, -2.25, 4)):
     draw_circle(ax, (x2, y2), radius)
     ax.text(x2, y2, r'$f(\theta)$', fontsize=12, ha='center', va='center')
-    ax.text(x2 + 0.4, y2 * 1.1 - np.sign(y2) * 0.1, '$a_{}$'.format(i + 1))
+    ax.text(x2 + radius * 0.9, y2 +radius, '$a_{}$'.format(i + 1), ha='center')
 draw_circle(ax, (x3, y3), radius)
 ax.text(x3 + 0.8, y3, '$y_k$', ha='left', va='center')
 draw_connecting_arrow(ax, (x3, y3), radius, (x3 + 0.8, y3), 0.1)
@@ -78,7 +78,7 @@ ax.text(x3, y3, r'$g(\theta)$', fontsize=12, ha='center', va='center')
 # ------------------------------------------------------------
 # draw connecting arrows
 for i, y1 in enumerate(np.linspace(1.5, -2.5, 5)):
-    for j, y2 in enumerate(np.linspace(1, -2.5, 4)):
+    for j, y2 in enumerate(np.linspace(1.25, -2.25, 4)):
         # we only label a 2 sets of arrows to avoid overcrowding the figure
         if i not in [0, 4]:
             arrow_kwargs = {'head_width': 0.05, 'fc': 'black', 'alpha': 0.5}
@@ -97,7 +97,7 @@ for i, y1 in enumerate(np.linspace(1.5, -2.5, 5)):
                     '$w_{%s%s}$' % ((i+1), (j+1)), va=va, fontsize=12,
                     ha='center')
 
-for i, y2 in enumerate(np.linspace(1, -2.5, 4)):
+for i, y2 in enumerate(np.linspace(1.25, -2.25, 4)):
     draw_connecting_arrow(ax, (x2, y2), radius, (x3, y3), radius)
     ax.text((x2+x3)/2, (y2+y3)/2 + 0.1, '$w_{%sk}$' % (i+1),
             fontsize=12, ha='center', va='bottom')
