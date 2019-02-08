@@ -71,7 +71,7 @@ with pm.Model() as model:
 
 # compute histogram of results to plot below
 L_MCMC, mu_bins, gamma_bins = np.histogram2d(trace['mu'],
-                                             np.exp(trace['log_gamma']),
+                                             gamma(trace['log_gamma']),
                                              bins=(np.linspace(-5, 5, 41),
                                                    np.linspace(0, 5, 41)))
 L_MCMC[L_MCMC == 0] = 1E-16  # prevents zero-division errors
