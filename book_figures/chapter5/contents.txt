@@ -1,3 +1,6 @@
+fig_hierarchical_bayes_RV.py
+fig_hierarchical_bayes_sources.py
+fig_ABCexample.py
 fig_odds_ratio_coin.py
 fig_malmquist_bias.py
 fig_lutz_kelker.py
