@@ -69,7 +69,7 @@ def mercator_axes():
     ax.set_xticks(np.pi / 6 * np.linspace(-5, 5, 11))
     ax.set_yticks(mercator(np.pi / 12 * np.linspace(-5, 5, 11)))
     for axy in (ax.xaxis, ax.yaxis):
-        axy.set_major_formatter(plt.FuncFormatter(lambda s, a: r'$i^\circ$'
+        axy.set_major_formatter(plt.FuncFormatter(lambda s, a: r'$%i^\circ$'
                                                   % np.round(s * 180 / np.pi)))
 
     ax.set_xlim(-np.pi, np.pi)
