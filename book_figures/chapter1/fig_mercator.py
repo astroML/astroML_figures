@@ -21,9 +21,9 @@ The code below is a revised version from the second edition of the book (ZI).
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.patches import Ellipse
 
-#----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -31,10 +31,12 @@ from matplotlib.patches import Ellipse
 from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
-#------------------------------------------------------------
+
+# ------------------------------------------------------------
 def mercator(latitude):
     # see https://en.wikipedia.org/wiki/Mercator_projection
-    return np.log((1+np.sin(latitude))/np.cos(latitude))
+    return np.log((1 + np.sin(latitude)) / np.cos(latitude))
+
 
 def plot_small_mercator_tissot_ellipse(longitude, latitude, radius):
     """Plot Tissot Ellipse/Tissot Indicatrix for Mercator projection
@@ -50,33 +52,33 @@ def plot_small_mercator_tissot_ellipse(longitude, latitude, radius):
     """
     phi1 = np.linspace(-np.pi, 0, 360)
     phi2 = np.linspace(0, np.pi, 360)
-    for i in range(0,np.size(longitude)):
+
+    for i in range(0, np.size(longitude)):
         long0 = longitude[i]
-        for j in range(0,np.size(latitude)):
+        for j in range(0, np.size(latitude)):
             lat0 = latitude[j]
             x = long0 + radius / np.cos(lat0) * np.cos(phi1)
             y1 = mercator(lat0 + radius * np.sin(phi1))
             y2 = mercator(lat0 + radius * np.sin(phi2))
             plt.fill_between(x, y1, y2, color='gray', alpha=0.5, linewidth=0)
 
+
 # plot Mercator projection: we need to set this up manually
 def mercator_axes():
     ax = plt.axes(aspect=1.0)
     ax.set_xticks(np.pi / 6 * np.linspace(-5, 5, 11))
-    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda s, a: r'$%i^\circ$'
-                                                % np.round(s * 180 / np.pi)))
-    yticks = mercator(np.pi / 12 * np.linspace(-5, 5, 11))
-    ax.set_yticks(yticks)
-    yticksLabels = [-75, -60, -45, -30, -15,  0, 15, 30, 45, 60, 75]
-    ylabels = [item.get_text() for item in ax.get_yticklabels()]
-    for (i,ylabel) in enumerate(ylabels):
-        ylabels[i] = "$" + str(yticksLabels[i]) + "^\circ$"
-    ax.set_yticklabels(ylabels)
+    ax.set_yticks(mercator(np.pi / 12 * np.linspace(-5, 5, 11)))
+    for axy in (ax.xaxis, ax.yaxis):
+        axy.set_major_formatter(plt.FuncFormatter(lambda s, a: r'$i^\circ$'
+                                                  % np.round(s * 180 / np.pi)))
+
     ax.set_xlim(-np.pi, np.pi)
-    ax.set_ylim(np.min(yticks), np.max(yticks))
+    ax.set_ylim(-np.pi / 2, np.pi / 2)
+
     return ax
 
-#------------------------------------------------------------
+
+# ------------------------------------------------------------
 # generate a latitude/longitude grid
 circ_long = np.linspace(-np.pi, np.pi, 13)[1:-1]
 circ_lat = np.linspace(-np.pi / 2, np.pi / 2, 7)[1:-1]
@@ -87,7 +89,7 @@ plt.figure(figsize=(5, 3.75))
 ax = mercator_axes()
 ax.grid(True)
 plot_small_mercator_tissot_ellipse(circ_long, circ_lat, radius)
+
 ax.set_title('Mercator projection')
 
-plt.savefig('mercator.png')
 plt.show()
