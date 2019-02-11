@@ -5,8 +5,8 @@ Figure 8.1
 
 An example showing the online nature of Bayesian regression. The upper panel
 shows the four points used in regression, drawn from the line
-y = theta_1 x + theta_2 with theta_1 = 1 and theta_2 = 0. The lower panel shows
-the posterior pdf in the (theta_1, theta_2) plane as each point is added in
+y = theta_1 x + theta_0 with theta_1 = 1 and theta_0 = 0. The lower panel shows
+the posterior pdf in the (theta_1, theta_0) plane as each point is added in
 sequence. For clarity, the implied dark regions for sigma > 3 have been
 removed. The fourth point is an upper-limit measurement of y, and the resulting
 posterior cuts off half the parameter space.
@@ -133,7 +133,7 @@ for i in range(4):
     if i in (0, 1):
         ax.xaxis.set_major_formatter(plt.NullFormatter())
     if i in (0, 2):
-        ax.set_ylabel(r'$\theta_2$')
+        ax.set_ylabel(r'$\theta_0$')
     if i in (2, 3):
         ax.set_xlabel(r'$\theta_1$')
 
