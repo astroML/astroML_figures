@@ -20,7 +20,7 @@ from matplotlib import pyplot as plt
 # you can set usetex to False.
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
-setup_text_plots(fontsize=16, usetex=True)
+setup_text_plots(fontsize=12, usetex=True)
 
 fig = plt.figure(figsize=(6, 4), facecolor='w')
 ax = fig.add_axes([0, 0, 1, 1],
@@ -71,7 +71,7 @@ for i, y2 in enumerate(np.linspace(1.25, -2.25, 4)):
     ax.text(x2, y2, r'$f(\theta)$', fontsize=12, ha='center', va='center')
     ax.text(x2 + radius * 0.9, y2 +radius, '$a_{}$'.format(i + 1), ha='center')
 draw_circle(ax, (x3, y3), radius)
-ax.text(x3 + 0.8, y3, '$y_k$', ha='left', va='center')
+ax.text(x3 + 0.8, y3, '$o_k$', ha='left', va='center')
 draw_connecting_arrow(ax, (x3, y3), radius, (x3 + 0.8, y3), 0.1)
 ax.text(x3, y3, r'$g(\theta)$', fontsize=12, ha='center', va='center')
 
@@ -105,9 +105,9 @@ for i, y2 in enumerate(np.linspace(1.25, -2.25, 4)):
 # ------------------------------------------------------------
 # Add text labels
 plt.text(x1, 2.7, "Input Layer", ha='center', va='top')
-plt.text(x2, 2.7, r"Hidden Layer\\\\ $a_j=f(\sum_{i=1}^N w_{ij} x_i)$",
+plt.text(x2, 2.7, r"Hidden Layer\\\\ $a_j=f(\sum_{i=1}^N w_{ij} x_i + b_j)$",
          ha='center', va='top')
-plt.text(x3, 2.7, r"Output Layer\\\\ $y_k=g(\sum_{j=1}^M w_{jk} a_j)$",
+plt.text(x3, 2.7, r"Output Layer\\\\ $o_k=g(\sum_{j=1}^M w_{jk} a_j + b_k)$",
          ha='center', va='top')
 
 ax.set_aspect('equal')
