@@ -35,12 +35,13 @@ if "setup_text_plots" not in globals():
 setup_text_plots(fontsize=8, usetex=True)
 
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # define a squared exponential covariance function
 def squared_exponential(x1, x2, h):
     return np.exp(-0.5 * (x1 - x2) ** 2 / h ** 2)
 
-#------------------------------------------------------------
+
+# ------------------------------------------------------------
 # draw samples from the unconstrained covariance
 np.random.seed(1)
 x = np.linspace(0, 10, 100)
@@ -50,58 +51,46 @@ mu = np.zeros(len(x))
 C = squared_exponential(x, x[:, None], h)
 draws = np.random.multivariate_normal(mu, C, 3)
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Constrain the mean and covariance with two points
 x1 = np.array([2.5, 7])
 y1 = np.cos(x1)
-k = 1.0*kernels.ExpSquaredKernel(metric=1)
-gp1 = george.GP(k,  mean=np.mean(y1))
+k = 1 * kernels.ExpSquaredKernel(metric=1)
+gp1 = george.GP(k, mean=np.mean(y1))
 gp1.compute(x1, 0)
 
-print(gp1.get_parameter_dict())
-print("Initial ln-likelihood: {0:.2f}".format(gp1.log_likelihood(y1)))
 
-
-
-# define the objective function and
-# its gradient
-def neg_ln_like(p,y,gp):
+# define the objective function and its gradient
+def neg_ln_like(p, y, gp):
     gp.set_parameter_vector(p)
     return -gp.log_likelihood(y)
 
-def grad_neg_ln_like(p,y,gp):
+
+def grad_neg_ln_like(p, y, gp):
     gp.set_parameter_vector(p)
     return -gp.grad_log_likelihood(y)
 
 
-result = minimize(neg_ln_like, gp1.get_parameter_vector(), jac=grad_neg_ln_like,
-                 args = (y1, gp1))
-print(result)
+result = minimize(neg_ln_like, gp1.get_parameter_vector(),
+                  jac=grad_neg_ln_like, args=(y1, gp1))
+
 gp1.set_parameter_vector(result.x)
-print("\nFinal ln-likelihood: {0:.2f}".format(gp1.log_likelihood(y1)))
 
 f1, MSE1 = gp1.predict(y1, x, return_var=True)
 f1_err = np.sqrt(MSE1)
-print(gp1.get_parameter_dict())
 
 # in George, the error is included in .compute call for calculation of the
 # covariance matrix
 dy2 = 0.2
 
-gp2 = george.GP(k,  mean=np.mean(y1))
+gp2 = george.GP(k, mean=np.mean(y1))
 gp2.compute(x1, dy2)
 
-
-print(gp2.get_parameter_dict())
-print("Initial ln-likelihood: {0:.2f}".format(gp2.log_likelihood(y1)))
-
-result = minimize(neg_ln_like, gp2.get_parameter_vector(), jac=grad_neg_ln_like,
-                 args = (y1, gp2))
-print(result)
+result = minimize(neg_ln_like, gp2.get_parameter_vector(),
+                  jac=grad_neg_ln_like, args=(y1, gp2))
 
 gp2.set_parameter_vector(result.x)
 print("\nFinal ln-likelihood: {0:.2f}".format(gp2.log_likelihood(y1)))
-
 
 f2, MSE2 = gp2.predict(y1, x, return_var=True)
 f2_err = np.sqrt(MSE2)
@@ -109,31 +98,23 @@ f2_err = np.sqrt(MSE2)
 print(gp2.get_parameter_dict())
 
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Constrain the mean and covariance with many noisy points
 x3 = np.linspace(0, 10, 20)
 y3 = np.cos(x3)
 dy3 = 0.2
 y3 = np.random.normal(y3, dy3)
 
-
-
-gp3 = george.GP(k,  mean=np.mean(y3))
+gp3 = george.GP(k, mean=np.mean(y3))
 gp3.compute(x3, dy3)
 
-print(gp3.get_parameter_bounds())
-print(gp3.get_parameter_dict())
-print("Initial ln-likelihood: {0:.2f}".format(gp3.log_likelihood(y3)))
-
-metric_min, metric_max = 0.1,5
-bounds = [(None,None), (np.log(metric_min), np.log(metric_max))]
-result = minimize(neg_ln_like, gp3.get_parameter_vector(), jac=grad_neg_ln_like,
+metric_min, metric_max = 0.1, 5
+bounds = [(None, None), (np.log(metric_min), np.log(metric_max))]
+result = minimize(neg_ln_like, gp3.get_parameter_vector(),
+                  jac=grad_neg_ln_like,
                   args=(y3, gp3), bounds=bounds)
-print(result)
 
 gp3.set_parameter_vector(result.x)
-print("\nFinal ln-likelihood: {0:.2f}".format(gp3.log_likelihood(y3)))
-
 
 f3, MSE3 = gp3.predict(y3, x, return_var=True)
 f3_err = np.sqrt(MSE3)
@@ -141,7 +122,7 @@ f3_err = np.sqrt(MSE3)
 # we have fit for the `h` parameter: print the result here:
 print("best-fit theta =", gp3.get_parameter_dict())
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Plot the diagrams
 fig = plt.figure(figsize=(15, 15))
 
