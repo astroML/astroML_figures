@@ -87,8 +87,8 @@ for f in factors:
 #------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 2.5))
-fig.subplots_adjust(left=0.1, right=0.95, wspace=0.25,
-                    bottom=0.12, top=0.95, hspace=0.2)
+fig.subplots_adjust(left=0.1, right=0.95, wspace=0.3,
+                    bottom=0.15, top=0.95, hspace=0.35)
 
 for i, f in enumerate(factors):
     P_best = 2 * np.pi / omega_best[f]

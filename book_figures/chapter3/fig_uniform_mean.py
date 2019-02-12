@@ -80,7 +80,7 @@ for nsig in (1, 2, 3):
             np.hstack((nsig * root_N_scaling,
                        -nsig * root_N_scaling[::-1])), 'b', alpha=0.2)
 ax.set_xlim(N[0], N[-1])
-ax.set_ylim(-0.199, 0.199)
+ax.set_ylim(-0.19, 0.199)
 ax.set_ylabel(r'$\bar{\mu}$')
 ax.xaxis.set_major_formatter(plt.NullFormatter())
 
@@ -101,7 +101,7 @@ for nsig in (1, 2, 3):
             np.hstack((nsig * N_scaling,
                        -nsig * N_scaling[::-1])), 'g', alpha=0.2)
 ax.set_xlim(N[0], N[-1])
-ax.set_ylim(-0.0399, 0.0399)
+ax.set_ylim(-0.0399, 0.039)
 ax.set_xlabel('$N$')
 ax.set_ylabel(r'$\bar{\mu}$')
 

@@ -90,7 +90,7 @@ ax.xaxis.set_major_formatter(plt.NullFormatter())
 
 # Third panel: the spectrogram
 ax = plt.subplot(313)
-ax.imshow(wPSD, origin='lower', aspect='auto', cmap=plt.cm.jet,
+ax.imshow(wPSD, origin='lower', aspect='auto',
           extent=[t[0], t[-1], f0[0], f0[-1]])
 
 ax.text(0.02, 0.95, ("Wavelet PSD"), color='w',

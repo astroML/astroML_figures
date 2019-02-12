@@ -62,9 +62,8 @@ ax.set_ylim(0, 1.8)
 ax.set_xlabel(r'${\rm flux}$')
 ax.set_ylabel(r'$p({\rm flux})$')
 ax.yaxis.set_major_locator(plt.MultipleLocator(0.4))
-ax.text(0.04, 0.98, r'${\rm 20\%\ flux\ error}$',
-        ha='left', va='top', transform=ax.transAxes,
-        bbox=dict(ec='none', fc='w'))
+ax.text(0.04, 0.95, r'${\rm 20\%\ flux\ error}$',
+        ha='left', va='top', transform=ax.transAxes)
 
 # next plot the magnitude distribution
 ax = fig.add_subplot(122)
@@ -75,9 +74,8 @@ ax.plot([0, 0], [0, 2], ':k', lw=1)
 ax.set_xlim(-1.1, 1.1)
 ax.set_ylim(0, 1.8)
 ax.yaxis.set_major_locator(plt.MultipleLocator(0.4))
-ax.text(0.04, 0.98, r'${\rm mag} = -2.5\log_{10}({\rm flux})$',
-        ha='left', va='top', transform=ax.transAxes,
-        bbox=dict(ec='none', fc='w'))
+ax.text(0.04, 0.95, r'${\rm mag} = -2.5\log_{10}({\rm flux})$',
+        ha='left', va='top', transform=ax.transAxes)
 
 ax.set_xlabel(r'${\rm mag}$')
 ax.set_ylabel(r'$p({\rm mag})$')

@@ -19,7 +19,6 @@ scaling.
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-
 from astroML.datasets import sdss_corrected_spectra
 
 #----------------------------------------------------------------------
@@ -56,6 +55,7 @@ for i in range(ncols):
     for j in range(nrows):
         ax = fig.add_subplot(nrows, ncols, ncols * j + 1 + i)
         ax.plot(lam, spec_sample[ncols * j + i], '-k', lw=1)
+        ax.set_xlim(3100, 7999)
 
         ax.yaxis.set_major_formatter(plt.NullFormatter())
         ax.xaxis.set_major_locator(plt.MultipleLocator(1000))
@@ -64,7 +64,6 @@ for i in range(ncols):
         else:
             plt.xlabel(r'wavelength $(\AA)$')
 
-        ax.set_xlim(3000, 7999)
         ylim = ax.get_ylim()
         dy = 0.05 * (ylim[1] - ylim[0])
         ax.set_ylim(ylim[0] - dy, ylim[1] + dy)
