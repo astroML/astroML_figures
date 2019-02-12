@@ -48,7 +48,11 @@ z_test = z[1::100]
 
 def plot_results(z, z_fit, plotlabel=None,
                  xlabel=True, ylabel=True):
-    plt.scatter(z[::1], z_fit[::1], s=1, lw=0, c='k')
+    edges = np.linspace(z.min(), z.max(), 101)
+    H, zs_bins, zp_bins = np.histogram2d(z[::1], z_fit[::1], bins=edges)
+    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto', 
+               extent=[zs_bins[0], zs_bins[-1], zs_bins[0], zs_bins[-1]],
+               cmap=plt.cm.binary)
     plt.plot([-0.1, 0.4], [-0.1, 0.4], ':k')
     plt.xlim(-0.02, 0.4001)
     plt.ylim(-0.02, 0.4001)
