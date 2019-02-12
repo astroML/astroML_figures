@@ -45,7 +45,7 @@ def getExpStD(x,p):
     return Ex, Sx
 
 #------------------------------------------------------------
-np.random.seed(5)    # for repeatability
+np.random.seed(2)    # for repeatability
 
 N = 10               # number of measured stars
 mu_true = -50.0      # km/s, true systemic velocity
@@ -58,6 +58,10 @@ wi = 1/ei**2/np.sum(1/ei**2)
 wmean = np.sum(wi*xi)
 # uncertainty of weighted mean
 wmeane = 1/np.sqrt(np.sum(1/ei**2))
+# other stats
+medvel = np.median(xi)
+meanvel = np.mean(xi)
+velstd = np.std(xi)
 
 # define the grids and compute logL
 sigma = np.linspace(0.01, 120, 70)
@@ -126,22 +130,31 @@ plt.plot([Ed, Ed], [0, 100.0], '--b', lw=1)
 
 # plot data
 ax4 = fig.add_axes((0.17, 0.55, 0.3, 0.40))
-ax4.plot(sigma, p_sigma, '-k', label='')
+#ax4.plot(sigma, p_sigma, '-k', label='')
 ax4.set_xlabel(r'${\rm v_{obs}}$ \, {\rm (km/s)}')
 ax4.set_ylabel(r'${\rm measurement \, index}$')
-ax4.set_xlim(-180, 80)
+ax4.set_xlim(-150, 50)
 ax4.set_ylim(0, 11)
 # mark +-error ranges
 for i in range(0,N):
     xL = xi[i] - ei[i]
     xR = xi[i] + ei[i]
     plt.plot([xL, xR], [i+1, i+1], 'b', lw=2)
-
-medvel = np.median(xi)
-meanvel = np.mean(xi)
-velstd = np.std(xi)
-plt.plot([wmean, wmean], [0, 100.0], '--g', lw=1)
+# mark true systemic velocity and weighted mean of data
+plt.plot([wmean, wmean], [0, 100.0], '--b', lw=1)
 plt.plot([mu_true, mu_true], [0, 100.0], ':r', lw=1)
+
+## mark posterior range for each star
+mup = Ev
+sigp = Ed
+for i in range(0,N):
+    mu0 = (mup/sigp**2 + xi[i]/ei[i]**2)/(1/sigp**2 + 1/ei[i]**2)
+    sig0 = 1/np.sqrt(1/sigp**2 + 1/ei[i]**2)
+    xL = mu0 - sig0
+    xR = mu0 + sig0
+    plt.plot([xL, xR], [i+0.7, i+0.7], 'g', lw=1)
+# and expectation value for systemic velocity
+plt.plot([mup, mup], [0, 100.0], 'g', lw=1)
 
 if (0):
     mederr = np.median(ei)
@@ -155,11 +168,11 @@ if (0):
     print('systemic velocity:', Ev, Sv)
     print('velocity dispresion:', Ed, Sd)
 
-    chi2dof = np.sum((xi-meanvel)**2/ei**2)/(N-1)
+    chi2dof = np.sum((xi-wmean)**2/ei**2)/(N-1)
     print('direct chi2dof:', chi2dof)
 
     # accounting for intrinsic velocity dispersion, using the true value
-    chi2dof = np.sum((xi-meanvel)**2/(ei**2+sigma_true**2)/(N-1))
+    chi2dof = np.sum((xi-wmean)**2/(ei**2+sigma_true**2)/(N-1))
     print('modified chi2dof:', chi2dof)
 
 plt.savefig('HBradVelExample.png')
