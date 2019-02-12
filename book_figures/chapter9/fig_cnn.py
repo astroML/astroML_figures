@@ -9,6 +9,7 @@ Convolutional Neural Network
 #   For more information, see http://astroML.github.com
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
+import os
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -30,7 +31,7 @@ fig = plt.figure(figsize=(6, 4), facecolor='w')
 # http://skyservice.pha.jhu.edu/DR12/ImgCutout/getjpeg.aspx?ra=202.469575&dec=47.1952583&scale=2&width=500&height=500&
 #
 
-m51 = plt.imread('m51.jpeg')
+m51 = plt.imread(os.path.join(os.path.dirname(__file__), 'm51.jpeg'))
 ax1 = fig.add_axes((0, 0.4, 0.25, 0.25))
 ax1.set_axis_off()
 ax1.imshow(m51)
@@ -110,7 +111,8 @@ seq2 = np.linspace(1, 0, 2)
 # convolution layer
 
 _, first_layer = draw_squares(ax, (x2, 0), 0.9, 9)
-_, second_layer = draw_squares(ax, (x3, 0), 0.8, 5, line=((x4, seq1[0]), (x4, seq1[-1]), radius))
+_, second_layer = draw_squares(ax, (x3, 0), 0.8, 5,
+                               line=((x4, seq1[0]), (x4, seq1[-1]), radius))
 
 # ------------------------------------------------------------
 # convolution layer connections
