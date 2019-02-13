@@ -66,14 +66,15 @@ def plot_small_mercator_tissot_ellipse(longitude, latitude, radius):
 # plot Mercator projection: we need to set this up manually
 def mercator_axes():
     ax = plt.axes(aspect=1.0)
+    ax.xaxis.set_major_formatter(
+        plt.FuncFormatter(lambda s, a: r'$%i^\circ$'
+                          % np.round(s * 180 / np.pi)))
     ax.set_xticks(np.pi / 6 * np.linspace(-5, 5, 11))
-    ax.set_yticks(mercator(np.pi / 12 * np.linspace(-5, 5, 11)))
-    for axy in (ax.xaxis, ax.yaxis):
-        axy.set_major_formatter(plt.FuncFormatter(lambda s, a: r'$%i^\circ$'
-                                                  % np.round(s * 180 / np.pi)))
-
+    yticks = np.pi / 12 * np.linspace(-5, 5, 11)
+    ax.set_yticks(mercator(yticks))
+    ax.set_yticklabels([r'$%i^\circ$'%ind for ind in yticks /np.pi*180 ])
     ax.set_xlim(-np.pi, np.pi)
-    ax.set_ylim(-np.pi / 2, np.pi / 2)
+    ax.set_ylim(-np.pi / 1.55, np.pi / 1.55)
 
     return ax
 
