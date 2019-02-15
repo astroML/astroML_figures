@@ -28,6 +28,7 @@ from astroML.plotting.mcmc import convert_to_stdev
 from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
+
 def gaussgauss_logL(xi, ei, mu, sigma):
     """Equation 5.63: gaussian likelihood with gaussian errors"""
     ndim = len(np.broadcast(sigma, mu).shape)
@@ -38,13 +39,15 @@ def gaussgauss_logL(xi, ei, mu, sigma):
     s2_e2 = sigma ** 2 + ei ** 2
     return -0.5 * np.sum(np.log(s2_e2) + (xi - mu) ** 2 / s2_e2, 0)
 
-def getExpStD(x,p):
+
+def getExpStD(x, p):
     """given p(x), compute expectation value and std. dev."""
-    Ex = np.sum(x*p)/np.sum(p)
-    Sx = np.sqrt(np.sum((x-Ex)**2*p)/np.sum(p))
+    Ex = np.sum(x * p) / np.sum(p)
+    Sx = np.sqrt(np.sum((x - Ex) ** 2 * p) /  np.sum(p))
     return Ex, Sx
 
-#------------------------------------------------------------
+
+# ------------------------------------------------------------
 np.random.seed(2)    # for repeatability
 
 N = 10               # number of measured stars
@@ -53,11 +56,11 @@ sigma_true = 20.0    # km/s, true velocity dispersion
 ei = 10 + 40 * np.random.random(N)   # n.b. heteroscedastic errors
 # generate measurements
 xi = np.random.normal(mu_true, np.sqrt(sigma_true ** 2 + ei ** 2))
-wi = 1/ei**2/np.sum(1/ei**2)
+wi = 1 / ei ** 2 / np.sum(1 / ei ** 2)
 # weighted mean
-wmean = np.sum(wi*xi)
+wmean = np.sum(wi * xi)
 # uncertainty of weighted mean
-wmeane = 1/np.sqrt(np.sum(1/ei**2))
+wmeane = 1 / np.sqrt(np.sum(1 / ei ** 2))
 # other stats
 medvel = np.median(xi)
 meanvel = np.mean(xi)
@@ -111,7 +114,7 @@ ax2 = fig.add_axes((0.17, 0.1, 0.3, 0.30))
 ax2.plot(mu, p_mu, '-k', label='')
 ax2.set_xlabel(r'$v_s$ \, {\rm (km/s)}')
 ax2.set_ylabel(r'$p(v_s)$')
-ax2.set_xlim(-100,0.0)
+ax2.set_xlim(-100, 0.0)
 ax2.set_ylim(0, 0.04)
 plt.plot([mu_true, mu_true], [0, 100.0], ':r', lw=1)
 Ev, Sv = getExpStD(mu, p_mu)
@@ -130,29 +133,29 @@ plt.plot([Ed, Ed], [0, 100.0], '--b', lw=1)
 
 # plot data
 ax4 = fig.add_axes((0.17, 0.55, 0.3, 0.40))
-#ax4.plot(sigma, p_sigma, '-k', label='')
 ax4.set_xlabel(r'${\rm v_{obs}}$ \, {\rm (km/s)}')
 ax4.set_ylabel(r'${\rm measurement \, index}$')
 ax4.set_xlim(-150, 50)
 ax4.set_ylim(0, 11)
 # mark +-error ranges
-for i in range(0,N):
+for i in range(0, N):
     xL = xi[i] - ei[i]
     xR = xi[i] + ei[i]
-    plt.plot([xL, xR], [i+1, i+1], 'b', lw=2)
+    plt.plot([xL, xR], [i + 1, i + 1], 'b', lw=2)
 # mark true systemic velocity and weighted mean of data
 plt.plot([wmean, wmean], [0, 100.0], '--b', lw=1)
 plt.plot([mu_true, mu_true], [0, 100.0], ':r', lw=1)
 
-## mark posterior range for each star
+# mark posterior range for each star
 mup = Ev
 sigp = Ed
-for i in range(0,N):
-    mu0 = (mup/sigp**2 + xi[i]/ei[i]**2)/(1/sigp**2 + 1/ei[i]**2)
-    sig0 = 1/np.sqrt(1/sigp**2 + 1/ei[i]**2)
+for i in range(0, N):
+    sig0 = 1 / np.sqrt(1 / sigp ** 2 + 1 / ei[i] ** 2)
+    mu0 = (mup / sigp ** 2 + xi[i] / ei[i] ** 2) / sig0 ** 2
     xL = mu0 - sig0
     xR = mu0 + sig0
-    plt.plot([xL, xR], [i+0.7, i+0.7], 'g', lw=1)
+    plt.plot([xL, xR], [i + 0.7, i + 0.7], 'g', lw=1)
+
 # and expectation value for systemic velocity
 plt.plot([mup, mup], [0, 100.0], 'g', lw=1)
 
