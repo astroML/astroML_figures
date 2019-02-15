@@ -6,8 +6,7 @@ An example of hierarchical Bayes modeling: estimate systemic velocity and
 velocity dispersion for a set of stellar radial velocity measurements.
 It is assumed that measurement uncertainties are known and Gaussian, and
 that true velocities are centered on an unknown systemic velocity and have
-a Gaussian scatter given by unknown velocity dispersion. Code modeled after
-Figure 5.7.
+a Gaussian scatter given by unknown velocity dispersion.
 """
 # Author: Zeljko Ivezic
 # License: BSD
@@ -159,24 +158,4 @@ for i in range(0, N):
 # and expectation value for systemic velocity
 plt.plot([mup, mup], [0, 100.0], 'g', lw=1)
 
-if (0):
-    mederr = np.median(ei)
-    print('median v:', medvel)
-    print('mean v:', meanvel)
-    print('weighted mean v:', wmean)
-    print('unc. weighted mean:', wmeane)
-    print('median uncertainty:', mederr)
-    print('data dispersion:', velstd)
-
-    print('systemic velocity:', Ev, Sv)
-    print('velocity dispresion:', Ed, Sd)
-
-    chi2dof = np.sum((xi-wmean)**2/ei**2)/(N-1)
-    print('direct chi2dof:', chi2dof)
-
-    # accounting for intrinsic velocity dispersion, using the true value
-    chi2dof = np.sum((xi-wmean)**2/(ei**2+sigma_true**2)/(N-1))
-    print('modified chi2dof:', chi2dof)
-
-plt.savefig('HBradVelExample.png')
 plt.show()
