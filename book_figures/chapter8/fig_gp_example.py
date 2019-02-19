@@ -124,7 +124,7 @@ print("best-fit theta =", gp3.get_parameter_dict())
 
 # ------------------------------------------------------------
 # Plot the diagrams
-fig = plt.figure(figsize=(15, 15))
+fig = plt.figure(figsize=(5, 5))
 
 
 # first: plot a selection of unconstrained functions
