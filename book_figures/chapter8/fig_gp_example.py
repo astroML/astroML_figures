@@ -25,7 +25,8 @@ from matplotlib import pyplot as plt
 import george
 from george import kernels
 from scipy.optimize import minimize
-#----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -90,12 +91,9 @@ result = minimize(neg_ln_like, gp2.get_parameter_vector(),
                   jac=grad_neg_ln_like, args=(y1, gp2))
 
 gp2.set_parameter_vector(result.x)
-print("\nFinal ln-likelihood: {0:.2f}".format(gp2.log_likelihood(y1)))
 
 f2, MSE2 = gp2.predict(y1, x, return_var=True)
 f2_err = np.sqrt(MSE2)
-
-print(gp2.get_parameter_dict())
 
 
 # ------------------------------------------------------------
@@ -118,9 +116,6 @@ gp3.set_parameter_vector(result.x)
 
 f3, MSE3 = gp3.predict(y3, x, return_var=True)
 f3_err = np.sqrt(MSE3)
-
-# we have fit for the `h` parameter: print the result here:
-print("best-fit theta =", gp3.get_parameter_dict())
 
 # ------------------------------------------------------------
 # Plot the diagrams
