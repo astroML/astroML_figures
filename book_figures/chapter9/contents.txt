@@ -1,4 +1,6 @@
 fig_neural_network.py
+fig_vae.py
+fig_cnn.py
 fig_bayes_DB.py
 fig_simple_naivebayes.py
 fig_rrlyrae_naivebayes.py
