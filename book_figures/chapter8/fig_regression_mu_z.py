@@ -18,9 +18,8 @@ with widths of 0.14. Kernel regression uses a Gaussian kernel with width 0.1.
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.stats import lognorm
 
-from astroML.cosmology import Cosmology
+from astropy import cosmology
 from astroML.datasets import generate_mu_z
 from astroML.linear_model import LinearRegression, PolynomialRegression,\
     BasisFunctionRegression, NadarayaWatson
@@ -38,9 +37,9 @@ setup_text_plots(fontsize=8, usetex=True)
 # Generate data
 z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
 
-cosmo = Cosmology()
+cosmo = cosmology.FlatLambdaCDM(71, 0.27, Tcmb0=0)
 z = np.linspace(0.01, 2, 1000)
-mu_true = np.asarray([cosmo.mu(zi) for zi in z])
+mu_true = cosmo.distmod(z)
 
 #------------------------------------------------------------
 # Define our classifiers
