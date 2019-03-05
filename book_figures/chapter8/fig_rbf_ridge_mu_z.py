@@ -28,11 +28,10 @@ update (as of astroML version 0.3) correctly takes into account data errors.
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.stats import lognorm
+
+from astropy.cosmology import LambdaCDM
 
 from astroML.linear_model import LinearRegression
-
-from astroML.cosmology import Cosmology
 from astroML.datasets import generate_mu_z
 
 #----------------------------------------------------------------------
@@ -49,10 +48,10 @@ setup_text_plots(fontsize=8, usetex=True)
 np.random.seed(0)
 
 z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
-cosmo = Cosmology()
+cosmo = LambdaCDM(H0=70, Om0=0.30, Ode0=0.70, Tcmb0=0)
 
 z = np.linspace(0.01, 2, 1000)
-mu = np.asarray([cosmo.mu(zi) for zi in z])
+mu = cosmo.distmod(z).value
 
 
 #------------------------------------------------------------
@@ -60,6 +59,7 @@ mu = np.asarray([cosmo.mu(zi) for zi in z])
 #  note that we're ignoring errors here, for the sake of example.
 def gaussian_basis(x, mu, sigma):
     return np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+
 
 centers = np.linspace(0, 1.8, 100)
 widths = 0.2
@@ -69,7 +69,7 @@ X = gaussian_basis(z_sample[:, np.newaxis], centers, widths)
 # Set up the figure to plot the results
 fig = plt.figure(figsize=(5, 2.7))
 fig.subplots_adjust(left=0.1, right=0.95,
-                    bottom=0.1, top=0.95,
+                    bottom=0.12, top=0.95,
                     hspace=0.15, wspace=0.2)
 
 regularization = ['none', 'l2', 'l1']
