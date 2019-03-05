@@ -19,10 +19,10 @@ with widths of 0.14. Kernel regression uses a Gaussian kernel with width 0.1.
 import numpy as np
 from matplotlib import pyplot as plt
 
-from astropy import cosmology
+from astropy.cosmology import LambdaCDM
 from astroML.datasets import generate_mu_z
-from astroML.linear_model import LinearRegression, PolynomialRegression,\
-    BasisFunctionRegression, NadarayaWatson
+from astroML.linear_model import (LinearRegression, PolynomialRegression,
+                                  BasisFunctionRegression, NadarayaWatson)
 
 #----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -37,7 +37,7 @@ setup_text_plots(fontsize=8, usetex=True)
 # Generate data
 z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
 
-cosmo = cosmology.FlatLambdaCDM(71, 0.27, Tcmb0=0)
+cosmo = LambdaCDM(H0=70, Om0=0.30, Ode0=0.70, Tcmb0=0)
 z = np.linspace(0.01, 2, 1000)
 mu_true = cosmo.distmod(z)
 
