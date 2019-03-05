@@ -22,8 +22,9 @@ from __future__ import print_function, division
 import numpy as np
 from matplotlib import pyplot as plt
 
+from astropy.cosmology import LambdaCDM
+
 from astroML.datasets import generate_mu_z
-from astroML.cosmology import Cosmology
 from astroML.plotting.mcmc import convert_to_stdev
 from astroML.utils.decorators import pickle_results
 
@@ -47,8 +48,8 @@ z_sample, mu_sample, dmu = generate_mu_z(100, z0=0.3,
 # define a log likelihood in terms of the parameters
 #  beta = [omegaM, omegaL]
 def compute_logL(beta):
-    cosmo = Cosmology(omegaM=beta[0], omegaL=beta[1])
-    mu_pred = np.array([cosmo.mu(z) for z in z_sample])
+    cosmo = LambdaCDM(H0=71, Om0=beta[0], Ode0=beta[1], Tcmb0=0)
+    mu_pred = cosmo.distmod(z_sample).value
     return - np.sum(0.5 * ((mu_sample - mu_pred) / dmu) ** 2)
 
 
@@ -67,6 +68,7 @@ def compute_mu_z_nonlinear(Nbins=50):
 
     return omegaM, omegaL, logL
 
+
 omegaM, omegaL, res = compute_mu_z_nonlinear()
 res -= np.max(res)
 
@@ -81,10 +83,10 @@ ax = fig.add_subplot(121)
 whr = np.where(res == np.max(res))
 omegaM_best = omegaM[whr[0][0]]
 omegaL_best = omegaL[whr[1][0]]
-cosmo = Cosmology(omegaM=omegaM_best, omegaL=omegaL_best)
+cosmo = LambdaCDM(H0=71, Om0=omegaM_best, Ode0=omegaL_best, Tcmb0=0)
 
 z_fit = np.linspace(0.04, 2, 100)
-mu_fit = np.asarray([cosmo.mu(z) for z in z_fit])
+mu_fit = cosmo.distmod(z_fit).value
 
 ax.plot(z_fit, mu_fit, '-k')
 ax.errorbar(z_sample, mu_sample, dmu, fmt='.k', ecolor='gray')
