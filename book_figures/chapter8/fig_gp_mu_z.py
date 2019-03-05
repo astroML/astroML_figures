@@ -19,7 +19,9 @@ from __future__ import print_function, division
 
 import numpy as np
 from matplotlib import pyplot as plt
-from astroML.cosmology import Cosmology
+
+from astropy.cosmology import LambdaCDM
+
 from astroML.datasets import generate_mu_z
 import george
 from george import kernels
@@ -38,9 +40,9 @@ setup_text_plots(fontsize=8, usetex=True)
 # Generate data
 z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
 
-cosmo = Cosmology()
+cosmo = LambdaCDM(H0=70, Om0=0.30, Ode0=0.70, Tcmb0=0)
 z = np.linspace(0.01, 2, 1000)
-mu_true = np.asarray([cosmo.mu(redshift) for redshift in z])
+mu_true = cosmo.distmod(z).value
 
 # ------------------------------------------------------------
 # fit the data
