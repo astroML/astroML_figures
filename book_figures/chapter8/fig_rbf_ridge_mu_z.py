@@ -47,8 +47,9 @@ setup_text_plots(fontsize=8, usetex=True)
 # generate data
 np.random.seed(0)
 
-z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
-cosmo = LambdaCDM(H0=70, Om0=0.30, Ode0=0.70, Tcmb0=0)
+cosmo = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7, Tcmb0=0)
+z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0, z0=0.3,
+                                         cosmo=cosmo)
 
 z = np.linspace(0.01, 2, 1000)
 mu = cosmo.distmod(z).value

@@ -39,16 +39,17 @@ setup_text_plots(fontsize=8, usetex=True)
 
 #------------------------------------------------------------
 # Generate the data
+fiducial_cosmo = LambdaCDM(H0=70, Om0=0.3, Ode0=0.7, Tcmb0=0)
 z_sample, mu_sample, dmu = generate_mu_z(100, z0=0.3,
                                          dmu_0=0.05, dmu_1=0.004,
-                                         random_state=1)
+                                         random_state=1, cosmo=fiducial_cosmo)
 
 
 #------------------------------------------------------------
 # define a log likelihood in terms of the parameters
 #  beta = [omegaM, omegaL]
 def compute_logL(beta):
-    cosmo = LambdaCDM(H0=71, Om0=beta[0], Ode0=beta[1], Tcmb0=0)
+    cosmo = LambdaCDM(H0=70, Om0=beta[0], Ode0=beta[1], Tcmb0=0)
     mu_pred = cosmo.distmod(z_sample).value
     return - np.sum(0.5 * ((mu_sample - mu_pred) / dmu) ** 2)
 
@@ -83,7 +84,7 @@ ax = fig.add_subplot(121)
 whr = np.where(res == np.max(res))
 omegaM_best = omegaM[whr[0][0]]
 omegaL_best = omegaL[whr[1][0]]
-cosmo = LambdaCDM(H0=71, Om0=omegaM_best, Ode0=omegaL_best, Tcmb0=0)
+cosmo = LambdaCDM(H0=70, Om0=omegaM_best, Ode0=omegaL_best, Tcmb0=0)
 
 z_fit = np.linspace(0.04, 2, 100)
 mu_fit = cosmo.distmod(z_fit).value
@@ -108,8 +109,8 @@ ax.contour(omegaM, omegaL, convert_to_stdev(res.T),
            colors='k')
 
 ax.plot([0, 1], [1, 0], '--k')
-ax.plot([0, 1], [0.73, 0.73], ':k')
-ax.plot([0.27, 0.27], [0, 2], ':k')
+ax.plot([0, 1], [0.70, 0.70], ':k')
+ax.plot([0.30, 0.30], [0, 2], ':k')
 
 ax.set_xlim(0.05, 0.75)
 ax.set_ylim(0.4, 1.1)
