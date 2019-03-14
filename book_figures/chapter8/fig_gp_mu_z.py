@@ -22,8 +22,8 @@ from matplotlib import pyplot as plt
 
 from sklearn.gaussian_process.kernels import ConstantKernel, RBF
 from sklearn.gaussian_process import GaussianProcessRegressor
+from astropy.cosmology import LambdaCDM
 
-from astroML.cosmology import Cosmology
 from astroML.datasets import generate_mu_z
 
 # ----------------------------------------------------------------------
@@ -37,11 +37,11 @@ setup_text_plots(fontsize=8, usetex=True)
 
 # ------------------------------------------------------------
 # Generate data
-z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
+cosmo = LambdaCDM(H0=71, Om0=0.27, Ode0=0.73, Tcmb0=0)
+z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0, cosmo=cosmo)
 
-cosmo = Cosmology()
 z = np.linspace(0.01, 2, 1000)
-mu_true = np.asarray([cosmo.mu(zi) for zi in z])
+mu_true = cosmo.distmod(z)
 
 # ------------------------------------------------------------
 # fit the data
