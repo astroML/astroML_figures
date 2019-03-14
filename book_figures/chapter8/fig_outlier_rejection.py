@@ -22,17 +22,18 @@ probability greater than 68% are circled in the first panel.
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
+
+import pymc3 as pm
+
 from matplotlib import pyplot as plt
+from theano import shared as tshared
+import theano.tensor as tt
+
 from astroML.datasets import fetch_hogg2010test
 from astroML.plotting.mcmc import convert_to_stdev
 
-# Hack to fix import issue in older versions of pymc
-import scipy
-import scipy.misc
-scipy.derivative = scipy.misc.derivative
-import pymc
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -43,164 +44,122 @@ setup_text_plots(fontsize=8, usetex=True)
 
 np.random.seed(0)
 
-#------------------------------------------------------------
-# Get data: this includes outliers
+# ------------------------------------------------------------
+# Get data: this includes outliers. We need to convert them to Theano variables
 data = fetch_hogg2010test()
-xi = data['x']
-yi = data['y']
-dyi = data['sigma_y']
+xi = tshared(data['x'])
+yi = tshared(data['y'])
+dyi = tshared(data['sigma_y'])
+size = len(data)
 
 
-#----------------------------------------------------------------------
-# First model: no outlier correction
-# define priors on beta = (slope, intercept)
-@pymc.stochastic
-def beta_M0(value=np.array([2., 100.])):
-    """Slope and intercept parameters for a straight line.
-    The likelihood corresponds to the prior probability of the parameters."""
-    slope, intercept = value
-    prob_intercept = 1 + 0 * intercept
-    # uniform prior on theta = arctan(slope)
-    # d[arctan(x)]/dx = 1 / (1 + x^2)
-    prob_slope = np.log(1. / (1. + slope ** 2))
-    return prob_intercept + prob_slope
+# ----------------------------------------------------------------------
+# Define basic linear model
 
-
-@pymc.deterministic
-def model_M0(xi=xi, beta=beta_M0):
-    slope, intercept = beta
+def model(xi, theta, intercept):
+    slope = np.tan(theta)
     return slope * xi + intercept
 
-y = pymc.Normal('y', mu=model_M0, tau=dyi ** -2,
-                observed=True, value=yi)
 
-M0 = dict(beta_M0=beta_M0, model_M0=model_M0, y=y)
+# ----------------------------------------------------------------------
+# First model: no outlier correction
+with pm.Model():
+    # set priors on model gradient and y-intercept
+    inter = pm.Uniform('inter', -1000, 1000)
+    theta = pm.Uniform('theta', -np.pi / 2, np.pi / 2)
+
+    y = pm.Normal('y', mu=model(xi, theta, inter), sd=dyi, observed=yi)
+
+    trace0 = pm.sample(draws=5000, tune=1000)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Second model: nuisance variables correcting for outliers
 # This is the mixture model given in equation 17 in Hogg et al
 
-# define priors on beta = (slope, intercept)
-@pymc.stochastic
-def beta_M1(value=np.array([2., 100.])):
-    """Slope and intercept parameters for a straight line.
-    The likelihood corresponds to the prior probability of the parameters."""
-    slope, intercept = value
-    prob_intercept = 1 + 0 * intercept
-    # uniform prior on theta = arctan(slope)
-    # d[arctan(x)]/dx = 1 / (1 + x^2)
-    prob_slope = np.log(1. / (1. + slope ** 2))
-    return prob_intercept + prob_slope
-
-
-@pymc.deterministic
-def model_M1(xi=xi, beta=beta_M1):
-    slope, intercept = beta
-    return slope * xi + intercept
-
-# uniform prior on Pb, the fraction of bad points
-Pb = pymc.Uniform('Pb', 0, 1.0, value=0.1)
-
-# uniform prior on Yb, the centroid of the outlier distribution
-Yb = pymc.Uniform('Yb', -10000, 10000, value=0)
-
-# uniform prior on log(sigmab), the spread of the outlier distribution
-log_sigmab = pymc.Uniform('log_sigmab', -10, 10, value=5)
-
-
-@pymc.deterministic
-def sigmab(log_sigmab=log_sigmab):
-    return np.exp(log_sigmab)
-
-
-# set up the expression for likelihood
-def mixture_likelihood(yi, model, dyi, Pb, Yb, sigmab):
+def mixture_likelihood(yi, xi):
     """Equation 17 of Hogg 2010"""
-    if (Pb < 0) or (Pb > 1):
-        raise ValueError("Pb out of range. This is a bug in PyMC: try "
-                         "re-running the script (and see "
-                         "https://github.com/pymc-devs/pymc/issues/629)")
+
+    sigmab = tt.exp(log_sigmab)
+    mu = model(xi, theta, inter)
 
     Vi = dyi ** 2
     Vb = sigmab ** 2
 
     root2pi = np.sqrt(2 * np.pi)
 
-    L_in = (1. / root2pi / dyi
-            * np.exp(-0.5 * (yi - model) ** 2 / Vi))
+    L_in = (1. / root2pi / dyi * np.exp(-0.5 * (yi - mu) ** 2 / Vi))
 
     L_out = (1. / root2pi / np.sqrt(Vi + Vb)
              * np.exp(-0.5 * (yi - Yb) ** 2 / (Vi + Vb)))
 
-    return np.sum(np.log((1 - Pb) * L_in + Pb * L_out))
-
-MixtureNormal = pymc.stochastic_from_dist('mixturenormal',
-                                          logp=mixture_likelihood,
-                                          dtype=np.float,
-                                          mv=True)
-
-y_mixture = MixtureNormal('y_mixture', model=model_M1, dyi=dyi,
-                          Pb=Pb, Yb=Yb, sigmab=sigmab,
-                          observed=True, value=yi)
-
-M1 = dict(y_mixture=y_mixture, beta_M1=beta_M1, model_M1=model_M1,
-          Pb=Pb, Yb=Yb, log_sigmab=log_sigmab, sigmab=sigmab)
+    return tt.sum(tt.log((1 - Pb) * L_in + Pb * L_out))
 
 
-#----------------------------------------------------------------------
+with pm.Model():
+    # uniform prior on Pb, the fraction of bad points
+    Pb = pm.Uniform('Pb', 0, 1.0, testval=0.1)
+
+    # uniform prior on Yb, the centroid of the outlier distribution
+    Yb = pm.Uniform('Yb', -10000, 10000, testval=0)
+
+    # uniform prior on log(sigmab), the spread of the outlier distribution
+    log_sigmab = pm.Uniform('log_sigmab', -10, 10, testval=5)
+
+    inter = pm.Uniform('inter', -200, 400)
+    theta = pm.Uniform('theta', -np.pi / 2, np.pi / 2, testval=np.pi / 4)
+
+    y_mixture = pm.DensityDist('mixturenormal', logp=mixture_likelihood,
+                               observed={'yi': yi, 'xi': xi})
+
+    trace1 = pm.sample(draws=5000, tune=1000)
+
+
+# ----------------------------------------------------------------------
 # Third model: marginalizes over the probability that each point is an outlier.
 # define priors on beta = (slope, intercept)
-@pymc.stochastic
-def beta_M2(value=np.array([2., 100.])):
-    """Slope and intercept parameters for a straight line.
-    The likelihood corresponds to the prior probability of the parameters."""
-    slope, intercept = value
-    prob_intercept = 1 + 0 * intercept
-    # uniform prior on theta = arctan(slope)
-    # d[arctan(x)]/dx = 1 / (1 + x^2)
-    prob_slope = np.log(1. / (1. + slope ** 2))
-    return prob_intercept + prob_slope
 
-
-@pymc.deterministic
-def model_M2(xi=xi, beta=beta_M2):
-    slope, intercept = beta
-    return slope * xi + intercept
-
-# qi is bernoulli distributed
-# Note: this syntax requires pymc version 2.2
-qi = pymc.Bernoulli('qi', p=1 - Pb, value=np.ones(len(xi)))
-
-
-def outlier_likelihood(yi, mu, dyi, qi, Yb, sigmab):
+def outlier_likelihood(yi, xi):
     """likelihood for full outlier posterior"""
+
+    sigmab = tt.exp(log_sigmab)
+    mu = model(xi, theta, inter)
+
     Vi = dyi ** 2
     Vb = sigmab ** 2
 
-    root2pi = np.sqrt(2 * np.pi)
-
-    logL_in = -0.5 * np.sum(qi * (np.log(2 * np.pi * Vi)
+    logL_in = -0.5 * tt.sum(qi * (np.log(2 * np.pi * Vi)
                                   + (yi - mu) ** 2 / Vi))
 
-    logL_out = -0.5 * np.sum((1 - qi) * (np.log(2 * np.pi * (Vi + Vb))
+    logL_out = -0.5 * tt.sum((1 - qi) * (np.log(2 * np.pi * (Vi + Vb))
                                          + (yi - Yb) ** 2 / (Vi + Vb)))
 
     return logL_out + logL_in
 
-OutlierNormal = pymc.stochastic_from_dist('outliernormal',
-                                          logp=outlier_likelihood,
-                                          dtype=np.float,
-                                          mv=True)
 
-y_outlier = OutlierNormal('y_outlier', mu=model_M2, dyi=dyi,
-                          Yb=Yb, sigmab=sigmab, qi=qi,
-                          observed=True, value=yi)
+with pm.Model():
+    # uniform prior on Pb, the fraction of bad points
+    Pb = pm.Uniform('Pb', 0, 1.0, testval=0.1)
 
-M2 = dict(y_outlier=y_outlier, beta_M2=beta_M2, model_M2=model_M2,
-          qi=qi, Pb=Pb, Yb=Yb, log_sigmab=log_sigmab, sigmab=sigmab)
+    # uniform prior on Yb, the centroid of the outlier distribution
+    Yb = pm.Uniform('Yb', -10000, 10000, testval=0)
 
-#------------------------------------------------------------
+    # uniform prior on log(sigmab), the spread of the outlier distribution
+    log_sigmab = pm.Uniform('log_sigmab', -10, 10, testval=5)
+
+    inter = pm.Uniform('inter', -1000, 1000)
+    theta = pm.Uniform('theta', -np.pi / 2, np.pi / 2)
+
+    # qi is bernoulli distributed
+    qi = pm.Bernoulli('qi', p=1 - Pb, shape=size)
+
+    y_outlier = pm.DensityDist('outliernormal', logp=outlier_likelihood,
+                               observed={'yi': yi, 'xi': xi})
+
+    trace2 = pm.sample(draws=5000, tune=1000)
+
+
+# ------------------------------------------------------------
 # plot the data
 fig = plt.figure(figsize=(5, 5))
 fig.subplots_adjust(left=0.1, right=0.95, wspace=0.25,
@@ -208,13 +167,12 @@ fig.subplots_adjust(left=0.1, right=0.95, wspace=0.25,
 
 # first axes: plot the data
 ax1 = fig.add_subplot(221)
-ax1.errorbar(xi, yi, dyi, fmt='.k', ecolor='gray', lw=1)
+ax1.errorbar(data['x'], data['y'], data['sigma_y'], fmt='.k', ecolor='gray', lw=1)
 ax1.set_xlabel('$x$')
 ax1.set_ylabel('$y$')
 
 #------------------------------------------------------------
 # Go through models; compute and plot likelihoods
-models = [M0, M1, M2]
 linestyles = [':', '--', '-']
 labels = ['no outlier correction\n(dotted fit)',
           'mixture model\n(dashed fit)',
@@ -226,12 +184,9 @@ bins = [(np.linspace(140, 300, 51), np.linspace(0.6, 1.6, 51)),
         (np.linspace(-40, 120, 51), np.linspace(1.8, 2.8, 51)),
         (np.linspace(-40, 120, 51), np.linspace(1.8, 2.8, 51))]
 
-for i, M in enumerate(models):
-    S = pymc.MCMC(M)
-    S.sample(iter=25000, burn=5000)
-    trace = S.trace('beta_M%i' % i)
-
-    H2D, bins1, bins2 = np.histogram2d(trace[:, 0], trace[:, 1], bins=50)
+for i, trace in enumerate([trace0, trace1, trace2]):
+    H2D, bins1, bins2 = np.histogram2d(np.tan(trace['theta']),
+                                       trace['inter'], bins=50)
     w = np.where(H2D == H2D.max())
 
     # choose the maximum posterior slope and intercept
@@ -244,17 +199,17 @@ for i, M in enumerate(models):
     # For the model which identifies bad points,
     # plot circles around points identified as outliers.
     if i == 2:
-        qi = S.trace('qi')[:]
-        Pi = qi.astype(float).mean(0)
-        outlier_x = xi[Pi < 0.32]
-        outlier_y = yi[Pi < 0.32]
+        Pi = trace['qi'].mean(0)
+        outlier_x = data['x'][Pi < 0.32]
+        outlier_y = data['y'][Pi < 0.32]
         ax1.scatter(outlier_x, outlier_y, lw=1, s=400, alpha=0.5,
                     facecolors='none', edgecolors='red')
 
     # plot the likelihood contours
     ax = plt.subplot(222 + i)
 
-    H, xbins, ybins = np.histogram2d(trace[:, 1], trace[:, 0], bins=bins[i])
+    H, xbins, ybins = np.histogram2d(trace['inter'],
+                                     np.tan(trace['theta']), bins=bins[i])
     H[H == 0] = 1E-16
     Nsigma = convert_to_stdev(np.log(H))
 
@@ -268,7 +223,7 @@ for i, M in enumerate(models):
     ax.xaxis.set_major_locator(plt.MultipleLocator(40))
     ax.yaxis.set_major_locator(plt.MultipleLocator(0.2))
 
-    ax.text(0.98, 0.98, labels[i], ha='right', va='top',
+    ax.text(0.96, 0.96, labels[i], ha='right', va='top',
             bbox=dict(fc='w', ec='none', alpha=0.5),
             transform=ax.transAxes)
     ax.set_xlim(bins[i][0][0], bins[i][0][-1])
