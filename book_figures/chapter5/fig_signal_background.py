@@ -20,11 +20,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats
 
-# Hack to fix import issue in older versions of pymc
-import scipy
-import scipy.misc
-scipy.derivative = scipy.misc.derivative
-import pymc
+import pymc3 as pm
+import theano.tensor as tt
 
 from astroML.plotting import plot_mcmc
 
@@ -60,41 +57,28 @@ x[i_bg] = background.rvs(np.sum(i_bg))
 
 #----------------------------------------------------------------------
 # Set up MCMC sampling
-A = pymc.Uniform('A', 0, 1, value=0.5)
-x0 = pymc.Uniform('x0', 0, 10, value=5)
-log_sigma = pymc.Uniform('log_sigma', -5, 5, value=0)
+with pm.Model():
+    A = pm.Uniform('A', 0, 1)
+    x0 = pm.Uniform('x0', 0, 10)
+    log_sigma = pm.Uniform('log_sigma', -5, 5)
 
+    def sigbg_like(x):
+        """signal + background likelihood"""
+        sigma = np.exp(log_sigma)
+        return tt.sum(np.log(A * np.exp(-0.5 * ((x - x0) / sigma) ** 2)
+                             / np.sqrt(2 * np.pi) / sigma + (1 - A) / W_true))
 
-@pymc.deterministic
-def sigma(log_sigma=log_sigma):
-    return np.exp(log_sigma)
-
-
-def sigbg_like(x, A, x0, sigma):
-    """signal + background likelihood"""
-    return np.sum(np.log(A * np.exp(-0.5 * ((x - x0) / sigma) ** 2)
-                         / np.sqrt(2 * np.pi) / sigma
-                         + (1 - A) / W_true))
-
-SigBG = pymc.stochastic_from_dist('sigbg',
-                                  logp=sigbg_like,
-                                  dtype=np.float, mv=True)
-
-M = SigBG('M', A, x0, sigma, observed=True, value=x)
-
-model = dict(M=M, A=A, x0=x0, log_sigma=log_sigma, sigma=sigma)
-
-#----------------------------------------------------------------------
-# Run the MCMC sampling
-S = pymc.MCMC(model)
-S.sample(iter=25000, burn=5000)
+    SigBG = pm.DensityDist('sigbg',
+                           logp=sigbg_like,
+                           observed=x)
+    trace = pm.sample(draws=5000, tune=1000)
 
 #------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 5))
-ax_list = plot_mcmc([S.trace(s)[:] for s in ['A', 'x0', 'sigma']],
+ax_list = plot_mcmc([trace[s] for s in ['A', 'x0']] + [np.exp(trace['log_sigma']),],
                     limits=[(0.05, 0.65), (5.75, 6.65), (0.05, 0.85)],
-                    labels=['$A$', '$\mu$', r'$\sigma$'],
+                    labels=[r'$A$', r'$\mu$', r'$\sigma$'],
                     bounds=(0.1, 0.1, 0.95, 0.95),
                     true_values=[A_true, x0_true, sigma_true],
                     fig=fig, colors='k')
