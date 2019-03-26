@@ -20,12 +20,11 @@ from __future__ import print_function, division
 import numpy as np
 from matplotlib import pyplot as plt
 
+from sklearn.gaussian_process.kernels import ConstantKernel, RBF
+from sklearn.gaussian_process import GaussianProcessRegressor
 from astropy.cosmology import LambdaCDM
 
 from astroML.datasets import generate_mu_z
-import george
-from george import kernels
-from scipy.optimize import minimize
 
 # ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
@@ -38,43 +37,24 @@ setup_text_plots(fontsize=8, usetex=True)
 
 # ------------------------------------------------------------
 # Generate data
-z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0)
+cosmo = LambdaCDM(H0=71, Om0=0.27, Ode0=0.73, Tcmb0=0)
+z_sample, mu_sample, dmu = generate_mu_z(100, random_state=0, cosmo=cosmo)
 
-cosmo = LambdaCDM(H0=70, Om0=0.30, Ode0=0.70, Tcmb0=0)
 z = np.linspace(0.01, 2, 1000)
-mu_true = cosmo.distmod(z).value
+mu_true = cosmo.distmod(z)
 
 # ------------------------------------------------------------
 # fit the data
 # Mesh the input space for evaluations of the real function,
 # the prediction and its MSE
 z_fit = np.linspace(0, 2, 1000)
-k = 1.0 * kernels.ExpSquaredKernel(metric=1e-1)
 
-gp = george.GP(k, mean=np.mean(mu_sample))
-gp.compute(z_sample, dmu)
+kernel = ConstantKernel(1.0, (1e-3, 1e3)) * RBF(10, (1e-2, 1e2))
 
+gp = GaussianProcessRegressor(kernel=kernel, alpha=dmu ** 2)
 
-# define the objective function and its gradient
-def neg_ln_like(p, y, gp):
-    gp.set_parameter_vector(p)
-    return -gp.log_likelihood(y)
-
-
-def grad_neg_ln_like(p, y, gp):
-    gp.set_parameter_vector(p)
-    return -gp.grad_log_likelihood(y)
-
-
-metric_min, metric_max = 1e-2, 1
-bounds = [(None, None), (np.log(metric_min), np.log(metric_max))]
-result = minimize(neg_ln_like, gp.get_parameter_vector(),
-                  jac=grad_neg_ln_like, args=(mu_sample, gp), bounds=bounds)
-
-gp.set_parameter_vector(result.x)
-
-y_pred, MSE = gp.predict(mu_sample, z_fit[:, None], return_var=True)
-sigma = np.sqrt(MSE)
+gp.fit(z_sample[:, None], mu_sample)
+y_pred, sigma = gp.predict(z_fit[:, None], return_std=True)
 
 # ------------------------------------------------------------
 # Plot the gaussian process
