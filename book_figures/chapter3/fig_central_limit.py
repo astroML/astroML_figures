@@ -53,7 +53,7 @@ for i in range(len(N)):
 
     # histogram the data
     ax.hist(x_i, bins=np.linspace(0, 1, 101),
-            histtype='stepfilled', alpha=0.5, normed=True)
+            histtype='stepfilled', alpha=0.5, density=True)
 
     # plot the expected gaussian pdf
     mu = 0.5

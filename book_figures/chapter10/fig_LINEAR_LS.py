@@ -32,6 +32,8 @@ from astroML.datasets import fetch_LINEAR_sample
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
+import matplotlib
+matplotlib.rc('_internal', classic_mode=True)
 
 #------------------------------------------------------------
 # Load the dataset
@@ -77,8 +79,8 @@ for i in range(6):
     # plot the phased data and best-fit curves
     ax = fig.add_subplot(321 + i)
     ax.errorbar(phased_t, y, dy, fmt='.k', ecolor='gray',
-                lw=1, ms=4, capsize=1.5)
-    ax.plot(phase_fit, y_fit, '-b', lw=2)
+                lw=1, ms=4, capsize=1.5, alpha=0.3)
+    ax.plot(phase_fit, y_fit, 'b', markeredgecolor='b', lw=2, fillstyle='top', linestyle='solid')
 
     ax.set_xlim(0, 1)
     ax.set_ylim(plt.ylim()[::-1])

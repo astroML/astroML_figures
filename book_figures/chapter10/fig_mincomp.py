@@ -72,7 +72,7 @@ f, spec_PSD = PSD_continuous(loglam, spec)
 #------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 3.75))
-fig.subplots_adjust(hspace=0.25)
+fig.subplots_adjust(hspace=0.35)
 
 # Top panel: plot noisy and smoothed spectrum
 ax = fig.add_subplot(211)

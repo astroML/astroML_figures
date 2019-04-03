@@ -90,7 +90,7 @@ PSDW2 = PSDW2[cutoff]
 #------------------------------------------------------------
 # Plot the data
 fig = plt.figure(figsize=(5, 5))
-fig.subplots_adjust(bottom=0.1, top=0.9, hspace=0.3)
+fig.subplots_adjust(bottom=0.1, top=0.9, hspace=0.35)
 
 # top panel: time series
 ax = fig.add_subplot(311)

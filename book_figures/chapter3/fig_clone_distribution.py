@@ -81,7 +81,7 @@ x_sample = interpolate.splev(Px_cuml_sample, tck)
 # Plot the cloned distribution and the procedure for obtaining it
 fig = plt.figure(figsize=(5, 5))
 fig.subplots_adjust(hspace=0.3, left=0.1, right=0.95,
-                    bottom=0.08, top=0.92)
+                    bottom=0.08, top=0.92, wspace=0.3)
 
 indices = np.linspace(0, Ndata - 1, 20).astype(int)
 
@@ -121,16 +121,16 @@ ax.set_ylabel('$x$')
 # plot the resulting cloned distribution
 ax = fig.add_subplot(224)
 hist(x, bins='knuth', ax=ax,
-     histtype='stepfilled', normed=True,
+     histtype='stepfilled', density=True,
      ec='#AAAAAA', fc='#DDDDDD',
      label='input data')
 hist(x_cloned, bins='knuth', ax=ax,
-     histtype='step', normed=True,
+     histtype='step', density=True,
      color='k', label='cloned data')
 ax.set_title('Cloned Distribution')
 ax.set_xlabel('$x$')
 ax.set_ylabel('$p(x)dx$')
-ax.text(0.75, 0.95, "KS test:\nD = %.2f\np = %.2f" % (D, p),
+ax.text(0.74, 0.95, "KS test:\nD = %.2f\np = %.2f" % (D, p),
         ha='left', va='top', transform=ax.transAxes)
 
 plt.show()

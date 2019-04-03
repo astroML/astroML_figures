@@ -50,7 +50,7 @@ rms_err = np.sqrt(np.mean(abs(H - sinegauss_FT(f, t0, f0, Q)) ** 2))
 #------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 3.75))
-fig.subplots_adjust(hspace=0.25)
+fig.subplots_adjust(hspace=0.35)
 
 # plot the wavelet
 ax = fig.add_subplot(211)
