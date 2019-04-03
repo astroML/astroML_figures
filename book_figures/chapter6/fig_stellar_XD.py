@@ -234,7 +234,7 @@ for data, label, ls in zip((X, Y, X_sample), labels, linestyles):
 
     ax.hist(w, bins=np.linspace(-0.08, 0.08, 100), linestyle=ls,
             histtype='step', label=label + '\n\t' + r'$\sigma_G=%.3f$' % sigma,
-            normed=True)
+            density=True)
 
 ax.legend(loc=2)
 ax.text(0.95, 0.95, '$w = -0.227g + 0.792r$\n$ - 0.567i + 0.05$',

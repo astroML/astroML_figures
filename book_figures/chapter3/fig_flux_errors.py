@@ -53,7 +53,7 @@ fig.subplots_adjust(bottom=0.17, top=0.9,
 # first plot the flux distribution
 ax = fig.add_subplot(121)
 ax.hist(flux, bins=np.linspace(0, 2, 50),
-        histtype='stepfilled', fc='gray', alpha=0.5, normed=True)
+        histtype='stepfilled', fc='gray', alpha=0.5, density=True)
 ax.plot(flux_fit, pdf_flux_fit, '-k')
 ax.plot([1, 1], [0, 2], ':k', lw=1)
 ax.set_xlim(-0.1, 2.1)
@@ -68,7 +68,7 @@ ax.text(0.04, 0.95, r'${\rm 20\%\ flux\ error}$',
 # next plot the magnitude distribution
 ax = fig.add_subplot(122)
 ax.hist(mag, bins=np.linspace(-1, 2, 50),
-        histtype='stepfilled', fc='gray', alpha=0.5, normed=True)
+        histtype='stepfilled', fc='gray', alpha=0.5, density=True)
 ax.plot(mag_fit, pdf_mag_fit, '-k')
 ax.plot([0, 0], [0, 2], ':k', lw=1)
 ax.set_xlim(-1.1, 1.1)

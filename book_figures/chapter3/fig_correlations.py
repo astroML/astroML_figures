@@ -103,7 +103,7 @@ for i in range(3):
     ax = fig.add_subplot(311 + i)
     for j in range(2):
         ax.hist(results[i, j], 40, histtype='stepfilled', fc='gray',
-                normed=True, **histargs[j])
+                density=True, **histargs[j])
 
     if i == 0:
         ax.legend(loc=2)

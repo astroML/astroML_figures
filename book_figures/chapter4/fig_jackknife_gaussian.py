@@ -76,10 +76,10 @@ fig.subplots_adjust(left=0.11, right=0.95, bottom=0.2, top=0.9,
 ax = fig.add_subplot(121)
 ax.hist(mu1_raw, np.linspace(0.996, 1.008, 100),
         label=r'$\sigma^*\ {\rm (std.\ dev.)}$',
-        histtype='stepfilled', fc='white', ec='black', normed=False)
+        histtype='stepfilled', fc='white', ec='black', density=False)
 ax.hist(mu2_raw, np.linspace(0.996, 1.008, 100),
         label=r'$\sigma_G^*\ {\rm (quartile)}$',
-        histtype='stepfilled', fc='gray', normed=False)
+        histtype='stepfilled', fc='gray', density=False)
 ax.legend(loc='upper left', handlelength=2)
 
 ax.xaxis.set_major_locator(plt.MultipleLocator(0.004))

@@ -59,7 +59,7 @@ fig, ax = plt.subplots(figsize=(5, 3.75))
 
 # histogram of data
 ax.hist(x, 100, histtype='stepfilled', alpha=0.2,
-        color='k', normed=True)
+        color='k', density=True)
 
 # best-fit normal curves
 x_sample = np.linspace(-15, 15, 1000)

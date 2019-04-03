@@ -117,7 +117,7 @@ ax.plot(mu, p_mu, '-k', label='marginalized')
 # plot the bootstrap distribution
 bins = np.linspace(-3, 5, 14)
 ax.hist(mu_boot, bins, histtype='step', linestyle='dashed',
-        color='b', normed=True, label='approximate')
+        color='b', density=True, label='approximate')
 
 # plot vertical line: newer matplotlib versions can use ax.vlines(x)
 ax.plot([mu_true, mu_true], [0, 1.0], ':k', lw=1)
@@ -137,7 +137,7 @@ ax.plot(sigma, p_sigma, '-k', label='marginalized')
 # plot the bootstrap distribution
 bins = np.linspace(0, 5, 31)
 ax.hist(sigma_boot, bins, histtype='step', linestyle='dashed',
-        color='b', normed=True, label='approximate')
+        color='b', density=True, label='approximate')
 
 # plot vertical line: newer matplotlib versions can use ax.vlines(x)
 ax.plot([sigma_true, sigma_true], [0, 1.0], ':k', lw=1)

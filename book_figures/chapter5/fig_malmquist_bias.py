@@ -72,7 +72,7 @@ x_pdf = np.linspace(0, 12, 1000)
 ax.plot(x_pdf, true_dist.pdf(x_pdf), '-k',
         label='true distribution')
 ax.hist(h_obs, bins, histtype='stepfilled',
-        alpha=0.3, fc='b', normed=True,
+        alpha=0.3, fc='b', density=True,
         label='observed distribution')
 ax.legend(loc=2, handlelength=2)
 
@@ -92,9 +92,9 @@ ax.set_ylabel(r'$p(x_{\rm obs})$')
 ax = fig.add_subplot(122)
 bins = 30
 ax.hist(h_obs[cut] - h_true[cut], bins, histtype='stepfilled',
-        alpha=0.3, color='k', normed=True, label='observed\nsample')
+        alpha=0.3, color='k', density=True, label='observed\nsample')
 ax.hist(h_obs[rand] - h_true[rand], bins, histtype='step',
-        color='k', linestyle='dashed', normed=True, label='random\nsample')
+        color='k', linestyle='dashed', density=True, label='random\nsample')
 ax.plot([0, 0], [0, 1], ':k')
 ax.legend(ncol=2, loc='upper center', frameon=False, handlelength=1)
 

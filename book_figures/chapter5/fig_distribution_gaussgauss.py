@@ -58,7 +58,7 @@ med_sample, sigG_sample = median_sigmaG(x)
 # plot the results
 fig, ax = plt.subplots(figsize=(5, 3.75))
 ax.hist(x, 100, histtype='stepfilled', alpha=0.2,
-        color='k', normed=True)
+        color='k', density=True)
 
 # plot the fitting normal curves
 x_sample = np.linspace(-15, 15, 1000)

@@ -121,11 +121,11 @@ ax.set_ylabel('$x$')
 # plot the resulting cloned distribution
 ax = fig.add_subplot(224)
 hist(x, bins='knuth', ax=ax,
-     histtype='stepfilled', normed=True,
+     histtype='stepfilled', density=True,
      ec='#AAAAAA', fc='#DDDDDD',
      label='input data')
 hist(x_cloned, bins='knuth', ax=ax,
-     histtype='step', normed=True,
+     histtype='step', density=True,
      color='k', label='cloned data')
 ax.set_title('Cloned Distribution')
 ax.set_xlabel('$x$')
