@@ -73,7 +73,7 @@ def compute_GMMbayes(Ncolors, Ncomp):
         classifiers.append([])
         predictions.append([])
         for nc in Ncolors:
-            clf = GMMBayes(ncm, min_covar=1E-5, covariance_type='full')
+            clf = GMMBayes(ncm, tol=1E-5, covariance_type='full')
             clf.fit(X_train[:, :nc], y_train)
             y_pred = clf.predict(X_test[:, :nc])
 

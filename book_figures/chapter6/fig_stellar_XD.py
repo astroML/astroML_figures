@@ -147,11 +147,12 @@ Xcov = np.tensordot(np.dot(Xcov, W.T), W, (-2, -1))
 #----------------------------------------------------------------------
 # This is a long calculation: save results to file
 @pickle_results("XD_stellar.pkl")
-def compute_XD(n_clusters=12, rseed=0, n_iter=100, verbose=True):
+def compute_XD(n_clusters=12, rseed=0, max_iter=100, verbose=True):
     np.random.seed(rseed)
-    clf = XDGMM(n_clusters, n_iter=n_iter, tol=1E-5, verbose=verbose)
+    clf = XDGMM(n_clusters, max_iter=max_iter, tol=1E-5, verbose=verbose)
     clf.fit(X, Xcov)
     return clf
+
 
 clf = compute_XD(12)
 

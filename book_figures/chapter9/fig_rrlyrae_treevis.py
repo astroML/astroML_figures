@@ -176,8 +176,7 @@ N_train = len(y_train)
 N_test = len(y_test)
 N_plot = 5000 + N_rr
 
-clf = DecisionTreeClassifier(compute_importances=True,
-                             random_state=0, criterion='entropy')
+clf = DecisionTreeClassifier(random_state=0, criterion='entropy')
 clf.fit(X_train, y_train)
 
 y_out = clf.predict(X_test)
@@ -232,8 +231,7 @@ ax.text(-0.08, 0.01, ("Cross-Validation, with\n"
 
 #--------------------------------------------------
 # compute statistics for a larger training set
-clf = DecisionTreeClassifier(compute_importances=True,
-                             random_state=0, criterion='entropy')
+clf = DecisionTreeClassifier(random_state=0, criterion='entropy')
 clf.fit(X_train, y_train)
 
 y_out = clf.predict(X_test)
