@@ -10,7 +10,7 @@ calculated via MCMC; dotted lines indicate the input parameters. The likelihood
 used is from eq. 10.83. Note the strong covariance between phi and omega in
 the bottom-right panel.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -23,16 +23,12 @@ from __future__ import print_function, division
 import numpy as np
 from matplotlib import pyplot as plt
 
-# Hack to fix import issue in older versions of pymc
-import scipy
-import scipy.misc
-scipy.derivative = scipy.misc.derivative
-import pymc
+import pymc3 as pm
 
 from astroML.plotting.mcmc import plot_mcmc
 from astroML.utils.decorators import pickle_results
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -41,7 +37,7 @@ if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Create  some  data
 np.random.seed(1)
 N_expected = 100
@@ -50,6 +46,7 @@ N_expected = 100
 # define our rate function
 def rate_func(t, r0, a, omega, phi):
     return r0 * (1 + a * np.sin(omega * t + phi))
+
 
 # define the time steps
 t = np.linspace(0, 10, 10000)
@@ -67,52 +64,24 @@ x = np.random.random(t.shape)
 obs = (x < r * Dt).astype(int)
 print("Number of observed photons:", np.sum(obs))
 
-#----------------------------------------------------------------------
-# Set up our MCMC model
-r0 = pymc.Uniform('r0', 0, 1000, value=10)
-a = pymc.Uniform('a', 0, 1, value=0.5)
-phi = pymc.Uniform('phi', -np.pi, np.pi, value=0)
-log_omega = pymc.Uniform('log_omega', 0, np.log(10), value=np.log(4))
 
-
-# uniform prior on log(omega)
-@pymc.deterministic
-def omega(log_omega=log_omega):
-    return np.exp(log_omega)
-
-
-@pymc.deterministic
-def rate(r0=r0, a=a, omega=omega, phi=phi):
-    return rate_func(t, r0, a, omega, phi)
-
-
-def arrival_like(obs, rate, Dt):
-    """likelihood for arrival time"""
-    N = np.sum(obs)
-    return (N * np.log(Dt)
-            - np.sum(rate) * Dt
-            + np.sum(np.log(rate[obs > 0])))
-
-Arrival = pymc.stochastic_from_dist('arrival',
-                                    logp=arrival_like,
-                                    dtype=np.float,
-                                    mv=True)
-
-obs_dist = Arrival('obs_dist', rate=rate, Dt=Dt, observed=True, value=obs)
-
-model = dict(obs_dist=obs_dist, r0=r0, a=a, phi=phi,
-             log_omega=log_omega, omega=omega,
-             rate=rate)
-
-
-#------------------------------------------------------------
-# Compute results (and save to a pickle file)
+# ----------------------------------------------------------------------
+# We need to wrap it in a function in order to be able to pickle the result
 @pickle_results('arrival_times.pkl')
-def compute_model(niter=20000, burn=2000):
-    S = pymc.MCMC(model)
-    S.sample(iter=niter, burn=burn)
-    traces = [S.trace(s)[:] for s in ['r0', 'a', 'phi', 'omega']]
-    return traces
+def compute_model(draws=5000, tune=2000):
+    # Set up and run our MCMC model
+    with pm.Model():
+        r0 = pm.Uniform('r0', 0, 1000)
+        a = pm.Uniform('a', 0, 1)
+        phi = pm.Uniform('phi', -np.pi, np.pi)
+        log_omega = pm.Uniform('log_omega', 0, np.log(10))
+
+        y = pm.Poisson('y', mu=rate_func(t, r0, a, np.exp(log_omega), phi) * Dt,
+                       observed=obs)
+
+        traces = pm.sample(draws=draws, tune=tune)
+        return traces
+
 
 traces = compute_model()
 
@@ -120,12 +89,13 @@ labels = ['$r_0$', '$a$', r'$\phi$', r'$\omega$']
 limits = [(6.5, 13.5), (0.55, 1.1), (-0.3, 1.7), (3.75, 4.25)]
 true = [r0_true, a_true, phi_true, omega_true]
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 5))
 
 # This function plots multiple panels with the traces
-plot_mcmc(traces, labels=labels, limits=limits, true_values=true, fig=fig,
+plot_mcmc([traces[i] for i in ['r0', 'a', 'phi']] + [np.exp(traces['log_omega'])],
+          labels=labels, limits=limits, true_values=true, fig=fig,
           bins=30, colors='k')
 
 # Plot the model of arrival times

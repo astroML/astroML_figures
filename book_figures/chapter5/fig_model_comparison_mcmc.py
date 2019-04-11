@@ -8,7 +8,7 @@ Gaussian fit to the data shown in figure 5.23. The remaining panels show the
 projections of the five-dimensional pdf for a Gaussian mixture model with
 two components. Contours are based on a 10,000 point MCMC chain.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -19,16 +19,14 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from scipy.special import gamma
-from scipy.stats import norm
 from sklearn.neighbors import BallTree
+import pymc3 as pm
+import theano.tensor as tt
+
 from astroML.density_estimation import GaussianMixture1D
 from astroML.plotting import plot_mcmc
-# hack to fix an import issue in older versions of pymc
-import scipy
-scipy.derivative = scipy.misc.derivative
-import pymc
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -38,28 +36,22 @@ if "setup_text_plots" not in globals():
 setup_text_plots(fontsize=8, usetex=True)
 
 
-def get_logp(S, model):
-    """compute log(p) given a pyMC model"""
-    M = pymc.MAP(model)
-    traces = np.array([S.trace(s)[:] for s in S.stochastics])
-    logp = np.zeros(traces.shape[1])
-    for i in range(len(logp)):
-        logp[i] = -M.func(traces[:, i])
-    return logp
-
-
-def estimate_bayes_factor(traces, logp, r=0.05, return_list=False):
+def estimate_bayes_factor(trace, r=0.05, return_list=False):
     """Estimate the bayes factor using the local density of points"""
-    D, N = traces.shape
+
+    # Convert traces to a numpy array, ignore the intervals
+    trace_arr = np.array([trace[i] for i in trace.varnames if "_interval__" not in i])
+    trace_t = trace_arr.T
+    N_iter, D = trace_t.shape
 
     # compute volume of a D-dimensional sphere of radius r
     Vr = np.pi ** (0.5 * D) / gamma(0.5 * D + 1) * (r ** D)
 
     # use neighbor count within r as a density estimator
-    bt = BallTree(traces.T)
-    count = bt.query_radius(traces.T, r=r, count_only=True)
+    bt = BallTree(trace_t)
+    count = bt.query_radius(trace_t, r=r, count_only=True)
 
-    BF = logp + np.log(N) + np.log(Vr) - np.log(count)
+    BF = trace.model_logp + np.log(N_iter) + np.log(Vr) - np.log(count)
 
     if return_list:
         return BF
@@ -68,7 +60,7 @@ def estimate_bayes_factor(traces, logp, r=0.05, return_list=False):
         return p50, 0.7413 * (p75 - p25)
 
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Generate the data
 mu1_in = 0
 sigma1_in = 0.3
@@ -81,132 +73,52 @@ np.random.seed(10)
 gm = GaussianMixture1D([mu1_in, mu2_in],
                        [sigma1_in, sigma2_in],
                        [ratio_in, 1])
-x_sample = gm.sample(N)
+x_sample = gm.sample(N)[0]
 
-#------------------------------------------------------------
-# Set up pyMC model: single gaussian
+
+# ------------------------------------------------------------
+# Set up pyMC3 model: single gaussian
 #  2 parameters: (mu, sigma)
-M1_mu = pymc.Uniform('M1_mu', -5, 5, value=0)
-M1_log_sigma = pymc.Uniform('M1_log_sigma', -10, 10, value=0)
+with pm.Model() as model1:
+    M1_mu = pm.Uniform('M1_mu', -5, 5)
+    M1_log_sigma = pm.Uniform('M1_log_sigma', -10, 10)
+
+    M1 = pm.Normal('M1', mu=M1_mu, sd=np.exp(M1_log_sigma), observed=x_sample)
+    trace1 = pm.sample(draws=2500, tune=100)
 
 
-@pymc.deterministic
-def M1_sigma(M1_log_sigma=M1_log_sigma):
-    return np.exp(M1_log_sigma)
-
-
-@pymc.deterministic
-def M1_tau(M1_sigma=M1_sigma):
-    return 1. / M1_sigma ** 2
-
-M1 = pymc.Normal('M1', M1_mu, M1_tau, observed=True, value=x_sample)
-model1 = dict(M1_mu=M1_mu, M1_log_sigma=M1_log_sigma,
-              M1_sigma=M1_sigma,
-              M1_tau=M1_tau, M1=M1)
-
-
-#------------------------------------------------------------
-# Set up pyMC model: double gaussian
+# ------------------------------------------------------------
+# Set up pyMC3 model: mixture of two gaussians
 #  5 parameters: (mu1, mu2, sigma1, sigma2, ratio)
+with pm.Model() as model2:
+    M2_mu1 = pm.Uniform('M2_mu1', -5, 5)
+    M2_mu2 = pm.Uniform('M2_mu2', -5, 5)
 
-def doublegauss_like(x, mu1, mu2, sigma1, sigma2, ratio):
-    """log-likelihood for double gaussian"""
-    r1 = ratio / (1. + ratio)
-    r2 = 1 - r1
-    L = r1 * norm(mu1, sigma1).pdf(x) + r2 * norm(mu2, sigma2).pdf(x)
-    L[L == 0] = 1E-16  # prevent divide-by-zero error
-    logL = np.log(L).sum()
-    if np.isinf(logL):
-        raise pymc.ZeroProbability
-    else:
-        return logL
+    M2_log_sigma1 = pm.Uniform('M2_log_sigma1', -10, 10)
+    M2_log_sigma2 = pm.Uniform('M2_log_sigma2', -10, 10)
 
+    ratio = pm.Uniform('ratio', 1E-3, 1E3)
 
-def rdoublegauss(mu1, mu2, sigma1, sigma2, ratio, size=None):
-    """random variable from double gaussian"""
-    r1 = ratio / (1. + ratio)
-    r2 = 1 - r1
-    R = np.asarray(np.random.random(size))
+    w1 = ratio / (1 + ratio)
+    w2 = 1 - w1
 
-    Rshape = R.shape
-    R = np.atleast1d(R)
+    y = pm.NormalMixture('doublegauss',
+                         w=tt.stack([w1, w2]),
+                         mu=tt.stack([M2_mu1, M2_mu2]),
+                         sd=tt.stack([np.exp(M2_log_sigma1),
+                                      np.exp(M2_log_sigma2)]),
+                         observed=x_sample)
 
-    mask1 = (R < r1)
-    mask2 = ~mask1
-    N1 = mask1.sum()
-    N2 = R.size - N1
-
-    R[mask1] = norm(mu1, sigma1).rvs(N1)
-    R[mask2] = norm(mu2, sigma2).rvs(N2)
-
-    return R.reshape(Rshape)
-
-DoubleGauss = pymc.stochastic_from_dist('doublegauss',
-                                        logp=doublegauss_like,
-                                        random=rdoublegauss,
-                                        dtype=np.float,
-                                        mv=True)
-
-# set up our Stochastic variables, mu1, mu2, sigma1, sigma2, ratio
-M2_mu1 = pymc.Uniform('M2_mu1', -5, 5, value=0)
-M2_mu2 = pymc.Uniform('M2_mu2', -5, 5, value=1)
-
-M2_log_sigma1 = pymc.Uniform('M2_log_sigma1', -10, 10, value=0)
-M2_log_sigma2 = pymc.Uniform('M2_log_sigma2', -10, 10, value=0)
+    trace2 = pm.sample(draws=2500, tune=100)
 
 
-@pymc.deterministic
-def M2_sigma1(M2_log_sigma1=M2_log_sigma1):
-    return np.exp(M2_log_sigma1)
-
-
-@pymc.deterministic
-def M2_sigma2(M2_log_sigma2=M2_log_sigma2):
-    return np.exp(M2_log_sigma2)
-
-M2_ratio = pymc.Uniform('M2_ratio', 1E-3, 1E3, value=1)
-
-M2 = DoubleGauss('M2', M2_mu1, M2_mu2, M2_sigma1, M2_sigma2, M2_ratio,
-                 observed=True, value=x_sample)
-
-model2 = dict(M2_mu1=M2_mu1, M2_mu2=M2_mu2,
-              M2_log_sigma1=M2_log_sigma1, M2_log_sigma2=M2_log_sigma2,
-              M2_sigma1=M2_sigma1, M2_sigma2=M2_sigma2,
-              M2_ratio=M2_ratio, M2=M2)
-
-
-#------------------------------------------------------------
-# Set up MCMC sampling
-def compute_MCMC_models(Niter=10000, burn=1000, rseed=0):
-    pymc.numpy.random.seed(rseed)
-
-    S1 = pymc.MCMC(model1)
-    S1.sample(iter=Niter, burn=burn)
-    trace1 = np.vstack([S1.trace('M1_mu')[:],
-                        S1.trace('M1_sigma')[:]])
-    logp1 = get_logp(S1, model1)
-
-    S2 = pymc.MCMC(model2)
-    S2.sample(iter=Niter, burn=burn)
-    trace2 = np.vstack([S2.trace('M2_mu1')[:],
-                        S2.trace('M2_mu2')[:],
-                        S2.trace('M2_sigma1')[:],
-                        S2.trace('M2_sigma2')[:],
-                        S2.trace('M2_ratio')[:]])
-    logp2 = get_logp(S2, model2)
-
-    return trace1, logp1, trace2, logp2
-
-trace1, logp1, trace2, logp2 = compute_MCMC_models()
-
-
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Compute Odds ratio with density estimation technique
-BF1, dBF1 = estimate_bayes_factor(trace1, logp1, r=0.02)
-BF2, dBF2 = estimate_bayes_factor(trace2, logp2, r=0.05)
 
+BF1, dBF1 = estimate_bayes_factor(trace1, r=0.05)
+BF2, dBF2 = estimate_bayes_factor(trace2, r=0.05)
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 5))
 
@@ -222,31 +134,32 @@ true_values = [mu1_in,
                sigma2_in,
                ratio_in]
 
-limits = [(-0.24, 0.12),
-          (0.55, 1.75),
-          (0.15, 0.45),
-          (0.55, 1.3),
-          (0.25, 2.1)]
+limits = [(-0.18, 0.18),
+          (0.5, 1.6),
+          (0.12, 0.45),
+          (0.76, 1.3),
+          (0.3, 2.5)]
 
-# we assume mu1 < mu2, but the results may be switched
-#  due to the symmetry of the problem.  If so, switch back
-if np.median(trace2[0]) > np.median(trace2[1]):
-    trace2 = trace2[[1, 0, 3, 2, 4], :]
-    N2_norm_mu = N2.mu[N2.M2_mu2, N2.M2_mu1,
-                       N2.M2_sigma2, N2.M2_sigma1, N2.M2_ratio]
-    N2_norm_Sig = N2.C[N2.M2_mu2, N2.M2_mu1,
-                       N2.M2_sigma2, N2.M2_sigma1, N2.M2_ratio]
+# We assume mu1 < mu2, but the results may be switched
+# due to the symmetry of the problem.  If so, switch back
+if np.median(trace2['M2_mu1']) < np.median(trace2['M2_mu2']):
+    trace2_for_plot = [np.exp(trace2[i]) if 'log_sigma' in i else trace2[i] for i in
+                       ['M2_mu1', 'M2_mu2', 'M2_log_sigma1', 'M2_log_sigma2', 'ratio']]
+else:
+    trace2_for_plot = [np.exp(trace2[i]) if 'log_sigma' in i else trace2[i] for i in
+                       ['M2_mu2', 'M2_mu1', 'M2_log_sigma2', 'M2_log_sigma1', 'ratio']]
 
 # Plot the simple 2-component model
-ax, = plot_mcmc(trace1, fig=fig, bounds=[0.6, 0.6, 0.95, 0.95],
-                limits=[(0.3, 0.8), (0.75, 1.15)],
+ax, = plot_mcmc([trace1['M1_mu'], np.exp(trace1['M1_log_sigma'])],
+                fig=fig, bounds=[0.6, 0.6, 0.95, 0.95],
+                limits=[(0.3, 0.65), (0.75, 1.05)],
                 labels=[r'$\mu$', r'$\sigma$'], colors='k')
 
 ax.text(0.05, 0.95, "Single Gaussian fit", va='top', ha='left',
         transform=ax.transAxes)
 
 # Plot the 5-component model
-ax_list = plot_mcmc(trace2, limits=limits, labels=labels,
+ax_list = plot_mcmc(trace2_for_plot, limits=limits, labels=labels,
                     true_values=true_values, fig=fig,
                     bounds=(0.12, 0.12, 0.95, 0.95),
                     colors='k')
