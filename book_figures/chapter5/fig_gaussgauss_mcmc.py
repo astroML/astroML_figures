@@ -10,7 +10,7 @@ with a scale-invariant prior, and marginalized over to obtain the distribution
 of mu and sigma shown by contours. For comparison, the posterior pdf from
 figure 5.7 is shown by shaded contours.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)

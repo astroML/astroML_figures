@@ -9,7 +9,7 @@ uniform background model given by eq. 5.83 and shown by the line. The remaining
 panels show projections of the three-dimensional posterior pdf, based on a
 20,000 point MCMC chain.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -25,7 +25,7 @@ import theano.tensor as tt
 
 from astroML.plotting import plot_mcmc
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -34,7 +34,7 @@ if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Set up dataset: gaussian signal in a uniform background
 np.random.seed(0)
 
@@ -55,7 +55,7 @@ x[i_sig] = signal.rvs(np.sum(i_sig))
 x[i_bg] = background.rvs(np.sum(i_bg))
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Set up MCMC sampling
 with pm.Model():
     A = pm.Uniform('A', 0, 1)
@@ -73,7 +73,7 @@ with pm.Model():
                            observed=x)
     trace = pm.sample(draws=5000, tune=1000)
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 5))
 ax_list = plot_mcmc([trace[s] for s in ['A', 'x0']] + [np.exp(trace['log_sigma']),],

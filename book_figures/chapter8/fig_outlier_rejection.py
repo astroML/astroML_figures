@@ -14,7 +14,7 @@ model in which points are identified individually as "good" or "bad"
 (eq. 8.68). The points which are identified by this method as bad with a
 probability greater than 68% are circled in the first panel.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -76,7 +76,6 @@ with pm.Model():
 # ----------------------------------------------------------------------
 # Second model: nuisance variables correcting for outliers
 # This is the mixture model given in equation 17 in Hogg et al
-
 def mixture_likelihood(yi, xi):
     """Equation 17 of Hogg 2010"""
 

@@ -9,7 +9,7 @@ y = b0 + A exp[-a(t - T)] for t > T , with homoscedastic Gaussian errors with
 sigma = 2, is shown in the top-right panel. The posterior pdf for the four
 model parameters is determined using MCMC and shown in the other panels.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -24,7 +24,7 @@ import pymc3 as pm
 from astroML.plotting.mcmc import plot_mcmc
 from astroML.utils.decorators import pickle_results
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -43,10 +43,6 @@ def burst(t, b0, A, alpha, T):
     return y
 
 
-def alpha(log_alpha):
-    return np.exp(log_alpha)
-
-
 np.random.seed(0)
 
 N = 100
@@ -63,7 +59,8 @@ y_obs = np.random.normal(y_true, sigma)
 
 
 # ----------------------------------------------------------------------
-# Set up MCMC sampling
+# Set up and run the MCMC sampling
+# We need to wrap it in a function in order to be able to pickle the result
 @pickle_results('matchedfilt_burst.pkl')
 def compute_MCMC_results(draws=3000, tune=1000):
     with pm.Model():
@@ -72,7 +69,7 @@ def compute_MCMC_results(draws=3000, tune=1000):
         T = pm.Uniform('T', 0, 100)
         log_alpha = pm.Uniform('log_alpha', -10, 10)
 
-        y = pm.Normal('y', mu=burst(t, b0, A, alpha(log_alpha), T),
+        y = pm.Normal('y', mu=burst(t, b0, A, np.exp(log_alpha), T),
                       sd=sigma, observed=y_obs)
 
         traces = pm.sample(draws=draws, tune=tune)
@@ -82,14 +79,14 @@ def compute_MCMC_results(draws=3000, tune=1000):
 
 traces = compute_MCMC_results()
 mean_vals = pm.summary(traces)['mean']
-mean_vals['alpha'] = alpha(mean_vals.pop('log_alpha'))
+mean_vals['alpha'] = np.exp(mean_vals.pop('log_alpha'))
 
 labels = ['$b_0$', '$A$', '$T$', r'$\alpha$']
 
 limits = [(9.2, 11.2), (2, 12), (45, 55), (0.0, 0.25)]
 true = [b0_true, A_true, T_true, alpha_true]
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 5))
 fig.subplots_adjust(bottom=0.1, top=0.95,
@@ -97,7 +94,7 @@ fig.subplots_adjust(bottom=0.1, top=0.95,
                     hspace=0.05, wspace=0.05)
 
 # This function plots multiple panels with the traces
-plot_mcmc([traces[i] for i in ['b0', 'A', 'T']] + [alpha(traces['log_alpha'])],
+plot_mcmc([traces[i] for i in ['b0', 'A', 'T']] + [np.exp(traces['log_alpha'])],
           labels=labels, limits=limits,
           true_values=true, fig=fig, bins=30, colors='k')
 

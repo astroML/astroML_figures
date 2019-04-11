@@ -8,7 +8,7 @@ Gaussian fit to the data shown in figure 5.23. The remaining panels show the
 projections of the five-dimensional pdf for a Gaussian mixture model with
 two components. Contours are based on a 10,000 point MCMC chain.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)

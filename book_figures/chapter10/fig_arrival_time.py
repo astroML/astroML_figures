@@ -10,7 +10,7 @@ calculated via MCMC; dotted lines indicate the input parameters. The likelihood
 used is from eq. 10.83. Note the strong covariance between phi and omega in
 the bottom-right panel.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -28,15 +28,16 @@ import pymc3 as pm
 from astroML.plotting.mcmc import plot_mcmc
 from astroML.utils.decorators import pickle_results
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
 # you can set usetex to False.
-from astroML.plotting import setup_text_plots
+if "setup_text_plots" not in globals():
+    from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Create  some  data
 np.random.seed(1)
 N_expected = 100
@@ -65,9 +66,10 @@ print("Number of observed photons:", np.sum(obs))
 
 
 # ----------------------------------------------------------------------
-#@pickle_results('arrival_times.pkl')
+# We need to wrap it in a function in order to be able to pickle the result
+@pickle_results('arrival_times.pkl')
 def compute_model(draws=5000, tune=2000):
-    # Set up our MCMC model
+    # Set up and run our MCMC model
     with pm.Model():
         r0 = pm.Uniform('r0', 0, 1000)
         a = pm.Uniform('a', 0, 1)
@@ -87,7 +89,7 @@ labels = ['$r_0$', '$a$', r'$\phi$', r'$\omega$']
 limits = [(6.5, 13.5), (0.55, 1.1), (-0.3, 1.7), (3.75, 4.25)]
 true = [r0_true, a_true, phi_true, omega_true]
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # Plot the results
 fig = plt.figure(figsize=(5, 5))
 

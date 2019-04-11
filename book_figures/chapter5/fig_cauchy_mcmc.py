@@ -10,7 +10,7 @@ direct computation on a regular grid from that diagram. The solid curves are
 the corresponding MCMC estimates using 10,000 sample points. The left and the
 bottom panels show marginalized distributions.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -24,7 +24,7 @@ from astroML.plotting.mcmc import convert_to_stdev
 
 import pymc3 as pm
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
@@ -46,37 +46,32 @@ def cauchy_logL(xi, sigma, mu):
             - np.sum(np.log(sigma ** 2 + (xi - mu) ** 2), 0))
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Draw the sample from a Cauchy distribution
 np.random.seed(44)
 mu_0 = 0
 gamma_0 = 2
 xi = cauchy(mu_0, gamma_0).rvs(10)
 
-#----------------------------------------------------------------------
-# Perform MCMC:
-
-# set up our Stochastic variables, mu and gamma
-with pm.Model() as model:
+# ----------------------------------------------------------------------
+# Set up and run MCMC:
+with pm.Model():
     mu = pm.Uniform('mu', -5, 5)
     log_gamma = pm.Uniform('log_gamma', -10, 10)
 
-    def gamma(log_gamma=log_gamma):
-        return np.exp(log_gamma)
-
     # set up our observed variable x
-    x = pm.Cauchy('x', mu, gamma(log_gamma), observed=xi)
+    x = pm.Cauchy('x', mu, np.exp(log_gamma), observed=xi)
 
     trace = pm.sample(draws=12000, tune=1000, cores=1)
 
 # compute histogram of results to plot below
 L_MCMC, mu_bins, gamma_bins = np.histogram2d(trace['mu'],
-                                             gamma(trace['log_gamma']),
+                                             np.exp(trace['log_gamma']),
                                              bins=(np.linspace(-5, 5, 41),
                                                    np.linspace(0, 5, 41)))
 L_MCMC[L_MCMC == 0] = 1E-16  # prevents zero-division errors
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Compute likelihood analytically for comparison
 mu = np.linspace(-5, 5, 70)
 gamma = np.linspace(0.1, 5, 70)
@@ -94,7 +89,7 @@ hist_gamma, bins_gamma = np.histogram(np.exp(trace['log_gamma']),
                                       bins=gamma_bins, density=True)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # plot the results
 fig = plt.figure(figsize=(5, 5))
 

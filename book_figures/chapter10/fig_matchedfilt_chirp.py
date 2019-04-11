@@ -9,7 +9,7 @@ with homoscedastic Gaussian errors with sigma = 2, is shown in the top-right
 panel. The posterior pdf for the four model parameters is determined using
 MCMC and shown in the other panels.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
@@ -66,6 +66,7 @@ with pm.Model():
     y = pm.Normal('y', mu=chirp(t, b0, np.exp(log_beta), A, np.exp(log_omega)),
                   sd=sigma, observed=y_obs)
 
+    # Choose the Metropolis-Hastings step rather than rely on the default
     step = pm.Metropolis()
     traces = pm.sample(draws=5000, tune=2000, step=step)
 
@@ -80,12 +81,9 @@ labels = ['$b_0$', '$A$', r'$\omega$', r'$\beta$']
 limits = [(9.5, 11.3), (3.6, 6.4), (0.065, 0.115), (0.00975, 0.01045)]
 true = [b0_true, A_true, omega_true, beta_true]
 
-
-t_fit = np.linspace(0, 100, 1000)
-
 fig = plt.figure(figsize=(5, 5))
-
 ax = plt.axes([0.5, 0.7, 0.45, 0.25])
+
 t_fit = np.linspace(0, 100, 1001)
 y_fit = chirp(t_fit, **mean_vals)
 

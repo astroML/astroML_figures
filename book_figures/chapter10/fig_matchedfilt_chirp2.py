@@ -7,7 +7,7 @@ A ten-parameter chirp model (see eq. 10.87) fit to a time series. Seven of the
 parameters can be considered nuisance parameters, and we marginalize over
 them in the likelihood contours shown here.
 """
-# Author: Jake VanderPlas
+# Author: Jake VanderPlas (adapted to PyMC3 by Brigitta Sipocz)
 # License: BSD
 #   The figure produced by this code is published in the textbook
 #   "Statistics, Data Mining, and Machine Learning in Astronomy" (2013)
