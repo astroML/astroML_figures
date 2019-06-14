@@ -5,14 +5,16 @@
 #   For more information, see http://astroML.github.com
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
+
+import numpy as np
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as torchdata
-import numpy as np
 
 from astroML.datasets import fetch_sdss_specgals
-#from astroML.utils.decorators import pickle_results
+from astroML.utils.decorators import pickle_results
 
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
@@ -35,25 +37,29 @@ for i, band in enumerate(['u', 'g', 'r', 'i', 'z']):
 # put redshifts into array
 datanormed[:, 5] = data['z']
 
+
 # define structure of neural net
 class Net(nn.Module):
     def __init__(self, nhidden):
         super(Net, self).__init__()
         self.fc_h = nn.Linear(5, nhidden)
         self.fc_o = nn.Linear(nhidden, 1)
+
     def forward(self, x):
         h = F.relu(self.fc_h(x))
         z = self.fc_o(h)
         return z
 
+
 # split data into 9:1 train:test
-dataset = torchdata.TensorDataset(torch.tensor(datanormed[:,0:5]),
-    torch.tensor(datanormed[:,5]).view(-1,1))
+dataset = torchdata.TensorDataset(torch.tensor(datanormed[:, 0:5]),
+                                  torch.tensor(datanormed[:, 5]).view(-1, 1))
 trainnum = datanormed.shape[0] // 10 * 9
 traindata, testdata = torchdata.random_split(dataset, [trainnum, datanormed.shape[0] - trainnum])
 traindataloader = torchdata.DataLoader(traindata, batch_size=128, shuffle=True)
 
-#@pickle_results('NNphotoz.pkl')
+
+@pickle_results('NNphotoz.pkl')
 def train_NN():
     model = Net(4)
     criterion = torch.nn.MSELoss(reduction='sum')
@@ -72,7 +78,7 @@ def train_NN():
             loss.backward()
             optimizer.step()
             train_loss += loss.item()
-        
+
         with torch.no_grad():
             photometry = testdata[:][0]
             redshifts = testdata[:][1]
@@ -93,6 +99,7 @@ def train_NN():
         scheduler.step(valid_loss)
     return model
 
+
 model = train_NN()
 
 # plot the results
@@ -102,13 +109,13 @@ with torch.no_grad():
     z_pred = model(photometry)
     fig = plt.figure(figsize=(5, 5))
     fig.subplots_adjust(wspace=0.25,
-                    left=0.1, right=0.95,
-                    bottom=0.15, top=0.9)
+                        left=0.1, right=0.95,
+                        bottom=0.15, top=0.9)
 
     ax = plt.axes()
     #ax.scatter(redshifts, z_pred, s=1, lw=0, c='k')
     H, zs_bins, zp_bins = np.histogram2d(redshifts.numpy().flatten(), z_pred.numpy().flatten(), 151)
-    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto', 
+    ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
                extent=[zs_bins[0], zs_bins[-1], zp_bins[0], zp_bins[-1]],
                cmap=plt.cm.binary)
     ax.plot([-0.1, 0.4], [-0.1, 0.4], ':k')
@@ -120,5 +127,4 @@ with torch.no_grad():
     ax.yaxis.set_major_locator(plt.MultipleLocator(0.1))
     ax.set_xlabel(r'$z_{\rm true}$')
     ax.set_ylabel(r'$z_{\rm fit}$')
-    plt.savefig('fig_photoz_nn.pdf')
     plt.show()
