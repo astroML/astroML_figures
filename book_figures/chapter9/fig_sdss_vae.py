@@ -8,19 +8,19 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.utils.data as torchdata
+
+from astroML.datasets import sdss_corrected_spectra
+
 # This function adjusts matplotlib settings for a uniform feel in the textbook.
 # Note that with usetex=True, fonts are rendered with LaTeX.  This may
 # result in an error if LaTeX is not installed on your system.  In that case,
 # you can set usetex to False.
 from astroML.plotting import setup_text_plots
 setup_text_plots(fontsize=8, usetex=True)
-
-from astroML.datasets import sdss_corrected_spectra
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.utils.data as torchdata
 
 # Fetch and prepare the data
 data = sdss_corrected_spectra.fetch_sdss_corrected_spectra()
@@ -34,11 +34,12 @@ meanspectrum = np.mean(normedspectra, axis=0)
 normedspectra -= meanspectrum[None, :]
 
 # split data into 3:1 train:test
-torch.manual_seed(802) # seed used for book figure
+torch.manual_seed(802)  # seed used for book figure
 dataset = torchdata.TensorDataset(torch.tensor(normedspectra))
 trainnum = normedspectra.shape[0] // 4 * 3
 traindata, testdata = torchdata.random_split(dataset, [trainnum, normedspectra.shape[0] - trainnum])
 traindataloader = torchdata.DataLoader(traindata, batch_size=128, shuffle=True)
+
 
 # define structure of variation autoencoder
 class VAE(nn.Module):
@@ -70,9 +71,11 @@ class VAE(nn.Module):
         z = self.reparameterize(mu, logvar)
         return self.decode(z), mu, logvar
 
+
 # add KL divergence to loss function
 def VAEloss(criterion, recon_x, x, mu, logvar):
     return criterion(recon_x, x) - 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+
 
 def train_model():
     model = VAE()
@@ -146,5 +149,4 @@ with torch.no_grad():
                 ax.set_xlabel(r'${\rm wavelength\ (\AA)}$')
             else:
                 ax.xaxis.set_major_formatter(plt.NullFormatter())
-plt.savefig('fig_sdss_vae.pdf')
 plt.show()
