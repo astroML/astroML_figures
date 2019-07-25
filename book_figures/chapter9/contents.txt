@@ -1,3 +1,4 @@
+fig_morph_nn.py
 fig_neural_network.py
 fig_vae.py
 fig_cnn.py
@@ -19,6 +20,8 @@ fig_photoz_forest.py
 fig_photoz_boosting.py
 fig_ROC_curve.py
 fig_star_quasar_ROC.py
+fig_photoz_nn.py
+fig_sdss_vae.py
 
 #fig_discriminant_function.py
 #fig_gauss_kernel.py
