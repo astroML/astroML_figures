@@ -150,7 +150,7 @@ mup = Ev
 sigp = Ed
 for i in range(0, N):
     sig0 = 1 / np.sqrt(1 / sigp ** 2 + 1 / ei[i] ** 2)
-    mu0 = (mup / sigp ** 2 + xi[i] / ei[i] ** 2) / sig0 ** 2
+    mu0 = (mup / sigp ** 2 + xi[i] / ei[i] ** 2) * (sig0 ** 2)
     xL = mu0 - sig0
     xR = mu0 + sig0
     plt.plot([xL, xR], [i + 0.7, i + 0.7], 'g', lw=1)
