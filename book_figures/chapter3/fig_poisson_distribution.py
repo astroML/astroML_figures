@@ -67,7 +67,7 @@ for mu, ls in zip(mu_values, linestyles):
     x = np.arange(-1, 200)
 
     plt.plot(x, dist.pmf(x), color='black',
-             linestyle='steps-mid' + ls,
+             linestyle=ls, drawstyle='steps-mid',
              label=r'$\mu=%i$' % mu)
 
 plt.xlim(-0.5, 30)
