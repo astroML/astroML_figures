@@ -87,7 +87,7 @@ def compute_results(*args):
     for classifier, kwargs in args:
         print(classifier.__name__)
         model = classifier(**kwargs)
-        model.fit(X, y)
+        model.fit(X_train, y_train)
         y_prob = model.predict_proba(X_test)
 
         names.append(classifier.__name__)
