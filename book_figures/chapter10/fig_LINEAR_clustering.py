@@ -57,7 +57,7 @@ data = fetch_LINEAR_geneva()
 
 filetemplate = 'gmm_res_%i_%i.pkl'
 attributes = [('gi', 'logP'),
-              ('ug', 'gi', 'iK', 'JK', 'logP', 'amp', 'skew')]
+              ('ug', 'gi', 'iK', 'JK', 'logP', 'Ampl', 'skew')]
 components = np.arange(1, 21)
 
 #------------------------------------------------------------
@@ -179,9 +179,9 @@ for i in range(2):
     ax1.set_ylabel(r'$\log(P)$')
 
     ax2 = plt.subplot(222 + 2 * i)
-    ax2.scatter(data['amp'][back], data['logP'][back],
+    ax2.scatter(data['Ampl'][back], data['logP'][back],
                 c='gray', edgecolors='none', s=4, linewidths=0)
-    ax2.scatter(data['amp'][fore], data['logP'][fore],
+    ax2.scatter(data['Ampl'][fore], data['logP'][fore],
                 c=color[fore], edgecolors='none', s=4, linewidths=0)
 
     #------------------------------
