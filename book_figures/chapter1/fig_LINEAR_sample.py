@@ -50,8 +50,8 @@ ri = targets['ri']
 logP = targets['LP1']
 
 # Cross-match by ID with the geneva catalog to get more accurate periods
-targetIDs = [str(ID).lstrip('0') for ID in targets['objectID']]
-genevaIDs = [ID.decode('utf-8').lstrip('0') for ID in geneva['LINEARobjectID']]
+targetIDs = list(targets['objectID'])
+genevaIDs = list(geneva['LINEARobjectID'])
 
 def safe_index(L, val):
     try:
