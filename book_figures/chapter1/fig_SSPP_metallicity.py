@@ -19,6 +19,7 @@ This is the same data as shown in figure 1.5.
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
+import copy
 from matplotlib import pyplot as plt
 
 #----------------------------------------------------------------------
@@ -53,10 +54,10 @@ FeH_mean, xedges, yedges = binned_statistic_2d(Teff, logg, FeH,
                                                'mean', bins=100)
 
 # Define custom colormaps: Set pixels with no sources to white
-cmap = plt.cm.copper
+cmap = copy.copy(plt.cm.get_cmap('copper'))
 cmap.set_bad('w', 1.)
 
-cmap_multicolor = plt.cm.jet
+cmap_multicolor = copy.copy(plt.cm.get_cmap('jet'))
 cmap_multicolor.set_bad('w', 1.)
 
 # Create figure and subplots

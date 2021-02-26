@@ -59,7 +59,7 @@ for (n, b, ls) in zip(n_values, b_values, linestyles):
     # create a binomial distribution
     dist = binom(n, b)
 
-    plt.plot(x, dist.pmf(x), color='black', linestyle='steps-mid' + ls,
+    plt.plot(x, dist.pmf(x), color='black', linestyle=ls, drawstyle='steps-mid',
              label=r'$b=%.1f,\ n=%i$' % (b, n))
 
 plt.xlim(-0.5, 35)

@@ -161,7 +161,8 @@ for i in range(2):
 
     #------------------------------------------------------------
     # Second axes: plot the inferred 1D distribution in z
-    ax2 = fig.add_subplot(2, 2, 2)
+    if i == 0:
+        ax2 = fig.add_subplot(2, 2, 2)
     factor = 0.08 ** 2 / (0.5 * (zbins[1:] + zbins[:-1])) ** 2
     ax2.errorbar(0.5 * (zbins[1:] + zbins[:-1]),
                  factor * dist_z, factor * err_z,
@@ -170,7 +171,8 @@ for i in range(2):
 
     #------------------------------------------------------------
     # Third axes: plot the inferred 1D distribution in M
-    ax3 = fig.add_subplot(224, yscale='log')
+    if i == 0:
+        ax3 = fig.add_subplot(224, yscale='log')
 
     # truncate the bins so the plot looks better
     Mbins = Mbins[3:-1]

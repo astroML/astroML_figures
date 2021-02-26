@@ -15,6 +15,7 @@ cf. figures 1.6 and 1.9.
 #   To report a bug or issue, use the following forum:
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
+import copy
 from matplotlib import pyplot as plt
 
 from astroML.datasets import fetch_sdss_S82standards
@@ -43,7 +44,7 @@ H, xbins, ybins = np.histogram2d(g - r, r - i,
                                        np.linspace(-0.5, 2.5, 50)))
 
 # Create a black and white color map where bad data (NaNs) are white
-cmap = plt.cm.binary
+cmap = copy.copy(plt.cm.get_cmap('binary'))
 cmap.set_bad('w', 1.)
 
 # Use the image display function imshow() to plot the result
