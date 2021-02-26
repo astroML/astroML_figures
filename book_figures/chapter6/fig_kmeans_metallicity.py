@@ -17,8 +17,6 @@ GMM are often better in practice.
 #    https://groups.google.com/forum/#!forum/astroml-general
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.patches import Ellipse
-from scipy.stats import norm
 
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
@@ -60,7 +58,6 @@ fig = plt.figure(figsize=(5, 5))
 ax = fig.add_subplot()
 
 # plot density
-ax = plt.axes()
 ax.imshow(H.T, origin='lower', interpolation='nearest', aspect='auto',
           extent=[FeH_bins[0], FeH_bins[-1],
                   alphFe_bins[0], alphFe_bins[-1]],
