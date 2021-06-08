@@ -2,6 +2,28 @@
 # Nair and Abraham (2010) http://adsabs.harvard.edu/abs/2010ApJS..186..427N
 # Ellipticals are class 0. Spirals are class 1
 # Derived from https://github.com/mhuertascompany/IAC_XXX_WINTER (Marc Huertas Company)
+"""
+CNN Classification of SDSS galaxy images
+----------------------------------------
+Figure 9.20
+
+The accuracy of a multi-layer Convolutional Neural Network
+applied to a set of morphologically classified galaxy images taken
+from the SDSS. The configuration of the network is described in
+Section 9.8.4. The left panel shows the false positive rate
+against the true positive rate for the resulting network. The right
+side of the figure shows examples of images that were correctly
+and incorrectly classified.
+
+"""
+
+# Author: Andrew Connolly
+# License: BSD
+#   The figure produced by this code is published in the updated edition of the
+#   textbook "Statistics, Data Mining, and Machine Learning in Astronomy" (2019)
+#   For more information, see http://astroML.github.com
+#   To report a bug or issue, use the following forum:
+#    https://groups.google.com/forum/#!forum/astroml-general
 
 import numpy as np
 import matplotlib.pyplot as plt
