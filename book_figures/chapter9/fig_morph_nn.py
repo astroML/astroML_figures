@@ -23,6 +23,12 @@ from sklearn.metrics import accuracy_score
 from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 
+try:
+    from astroML.datasets import fetch_sdss_galaxy_images
+    HAS_ASTROML_DATASETS = True
+except ImportError:
+    HAS_ASTROML_DATASETS = False
+
 
 if "setup_text_plots" not in globals():
     from astroML.plotting import setup_text_plots
@@ -237,8 +243,20 @@ n_objects = 500
 save_files = "./SDSS{}".format(n_objects)
 
 # Read SDSS images and labels
-D = read_savefile("sdss_images_1000.npy")[0:n_objects]
-Y = read_savefile("sdss_labels_1000.npy")[0:n_objects]
+if HAS_ASTROML_DATASETS:
+    D, Y = fetch_sdss_galaxy_images()
+else:
+    try:
+        D = read_savefile("sdss_images_1000.npy")[0:n_objects]
+        Y = read_savefile("sdss_labels_1000.npy")[0:n_objects]
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            'Loading this data automatically requires astroML 1.0.2+.\n'
+            'For older versions please download and uncompress the files\n'
+            '"sdss_images_1000.npy.gz" and \n'
+            '"sdss_labels_1000.npy"\n'
+            'manually before running this script. Data URL:\n'
+            'https://github.com/astroML/astroML-data/tree/main/datasets')
 
 # Train network and output to disk (keep 10% of data for test set)
 ntrain = D.shape[0] * 8 // 10.
