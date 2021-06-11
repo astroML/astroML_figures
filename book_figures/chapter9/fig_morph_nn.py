@@ -1,7 +1,3 @@
-# Generate a CNN for classifying SDSS galaxy images using the catalogs of
-# Nair and Abraham (2010) http://adsabs.harvard.edu/abs/2010ApJS..186..427N
-# Ellipticals are class 0. Spirals are class 1
-# Derived from https://github.com/mhuertascompany/IAC_XXX_WINTER (Marc Huertas Company)
 """
 CNN Classification of SDSS galaxy images
 ----------------------------------------
@@ -19,6 +15,7 @@ and incorrectly classified.
 
 # Author: Andrew Connolly
 # License: BSD
+#   The code is derived from an example by Marc Huertas-Company.
 #   The figure produced by this code is published in the updated edition of the
 #   textbook "Statistics, Data Mining, and Machine Learning in Astronomy" (2019)
 #   For more information, see http://astroML.github.com
@@ -264,7 +261,9 @@ def plot_CNN_performance(pred, labels):
 n_objects = 500
 save_files = "./SDSS{}".format(n_objects)
 
-# Read SDSS images and labels
+# Read SDSS images and labels. Data is a sample from
+# Nair and Abraham (2010) http://adsabs.harvard.edu/abs/2010ApJS..186..427N
+# Ellipticals are class 0. Spirals are class 1
 if HAS_ASTROML_DATASETS:
     D, Y = fetch_sdss_galaxy_images()
 else:
