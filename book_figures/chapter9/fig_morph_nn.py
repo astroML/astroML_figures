@@ -280,7 +280,7 @@ else:
             'https://github.com/astroML/astroML-data/tree/main/datasets')
 
 # Train network and output to disk (keep 10% of data for test set)
-ntrain = D.shape[0] * 8 // 10.
+ntrain = D.shape[0] * 8 // 10
 nval = D.shape[0] // 10
 npred = D.shape[0] - (ntrain + nval)  # test sample size;
 pred_index = ntrain + nval            # test sample start index;
