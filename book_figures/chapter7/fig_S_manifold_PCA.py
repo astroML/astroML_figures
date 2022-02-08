@@ -40,7 +40,7 @@ n_points = 1100
 n_neighbors = 10
 out_dim = 2
 
-X, color = datasets.samples_generator.make_s_curve(n_points)
+X, color = datasets.make_s_curve(n_points)
 
 # change the proportions to emphasize the weakness of PCA
 X[:, 1] -= 1
@@ -52,11 +52,12 @@ X[:, 2] *= 0.5
 pca = decomposition.PCA(out_dim)
 Y_pca = pca.fit_transform(X)
 
-lle = manifold.LocallyLinearEmbedding(n_neighbors, out_dim, method='modified',
+lle = manifold.LocallyLinearEmbedding(n_neighbors=n_neighbors,
+                                      n_components=out_dim, method='modified',
                                       random_state=0, eigen_solver='dense')
 Y_lle = lle.fit_transform(X)
 
-iso = manifold.Isomap(n_neighbors, out_dim)
+iso = manifold.Isomap(n_neighbors=n_neighbors, n_components=out_dim)
 Y_iso = iso.fit_transform(X)
 
 #------------------------------------------------------------
